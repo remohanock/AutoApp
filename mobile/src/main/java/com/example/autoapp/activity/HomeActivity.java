@@ -37,7 +37,9 @@ public class HomeActivity extends AppCompatActivity {
         driverArrayList = new ArrayList<>();
 
         // TODO: 22-03-2019 Drive name and photos to be fetched from configuration file later
-        String[] driverPics = {"https://www.lexellweb.com/wp-content/uploads/2018/08/Planet-Uke-Profile-Image-for-Sidebar-Circular.png","https://www.lexellweb.com/wp-content/uploads/2018/08/Planet-Uke-Profile-Image-for-Sidebar-Circular.png","https://www.morpht.com/sites/morpht/files/styles/landscape/public/dalibor-matura_1.jpg?itok=gxCAhwAV"};
+        String[] driverPics = {"https://www.lexellweb.com/wp-content/uploads/2018/08/Planet-Uke-Profile-Image-for-Sidebar-Circular.png",
+                "https://www.lexellweb.com/wp-content/uploads/2018/08/Planet-Uke-Profile-Image-for-Sidebar-Circular.png",
+                "https://www.morpht.com/sites/morpht/files/styles/landscape/public/dalibor-matura_1.jpg?itok=gxCAhwAV"};
         for (int i = 0; i < driverPics.length; i++) {
             Driver driver = new Driver("Driver " + (i + 1), driverPics[i]);
             driverArrayList.add(driver);
