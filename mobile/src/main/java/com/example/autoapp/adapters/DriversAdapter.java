@@ -10,7 +10,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.autoapp.R;
+import com.example.autoapp.helpers.CircleTransform;
 import com.example.autoapp.models.Driver;
 
 import java.util.ArrayList;
@@ -34,7 +36,13 @@ public class DriversAdapter extends RecyclerView.Adapter<DriversAdapter.DriversA
 
     @Override
     public void onBindViewHolder(@NonNull DriversAdapterViewHolder driversAdapterViewHolder, int i) {
+
         driversAdapterViewHolder.tv_drive_name.setText(driversList.get(i).getDriverName());
+        Glide.with(context)
+                .load(driversList.get(i).getDriverPhoto())
+                .transform(new CircleTransform())
+                .error(context.getDrawable(R.drawable.driver))
+                .into(driversAdapterViewHolder.iv_driver);
     }
 
     @Override
