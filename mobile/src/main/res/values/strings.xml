@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">AutoApp</string>
+    <string name="driver_profile_picture">Driver profile picture</string>
+    <string name="background">background</string>
+    <string name="select_a_driver">Choose a driver</string>
+    <string name="store">store</string>
+</resources>
