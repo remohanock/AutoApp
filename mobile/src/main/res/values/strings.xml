@@ -4,4 +4,5 @@
     <string name="background">background</string>
     <string name="select_a_driver">Choose a driver</string>
     <string name="store">store</string>
+    <string name="app">App</string>
 </resources>
