@@ -6,4 +6,13 @@
     <string name="store">store</string>
     <string name="app">App</string>
     <string name="settings">settings</string>
+    <string name="map">map</string>
+    <string name="album_art">album art</string>
+    <string name="song_name">Song Name</string>
+    <string name="artist_name">Artist Name</string>
+    <string name="previous">previous</string>
+    <string name="play_pause">play pause</string>
+    <string name="next">next</string>
+    <string name="volume">volume</string>
+    <string name="favourite">favourite</string>
 </resources>

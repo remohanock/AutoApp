@@ -11,6 +11,7 @@ public class StartMyServiceAtBootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             Intent serviceIntent = new Intent(context, HomeActivity.class);
+            serviceIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startService(serviceIntent);
         }
     }
