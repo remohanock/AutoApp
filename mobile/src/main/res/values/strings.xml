@@ -5,4 +5,5 @@
     <string name="select_a_driver">Choose a driver</string>
     <string name="store">store</string>
     <string name="app">App</string>
+    <string name="settings">settings</string>
 </resources>
