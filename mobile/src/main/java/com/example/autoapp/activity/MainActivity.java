@@ -20,9 +20,11 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView rv_apps;
-    private ArrayList<Apps> appsArrayList;
+    private ImageView iv_album_art;
     private ImageView iv_profile;
     String driverImage = "";
+    private ArrayList<Apps> appsArrayList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
         getExtras();
         bindControls();
         setAppsListItems();
+        setMediaPlayer();
+    }
+
+    private void setMediaPlayer() {
+        Glide.with(this).load("https://i.imgur.com/jAwu0Xk.png").error(android.R.drawable.ic_menu_gallery).into(iv_album_art);
     }
 
     private void setAppsListItems() {
@@ -47,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void bindControls() {
         rv_apps = findViewById(R.id.rv_apps);
+        iv_album_art = findViewById(R.id.iv_album_art);
         iv_profile = findViewById(R.id.iv_profile);
         Glide.with(this)
                 .load(driverImage)
