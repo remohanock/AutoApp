@@ -32,8 +32,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setAppsListItems() {
         appsArrayList = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
-            appsArrayList.add(new Apps(i, "App " + i));
+        String[] appsNames = {"Contact", "Calendar", "Camera", "Weather", "News"};
+        for (int i = 0; i < appsNames.length; i++) {
+            appsArrayList.add(new Apps(i, appsNames[i]));
         }
         AppsAdapter appsAdapter = new AppsAdapter(this, appsArrayList);
         rv_apps.setAdapter(appsAdapter);
