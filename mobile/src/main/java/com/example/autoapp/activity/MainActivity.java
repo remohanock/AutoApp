@@ -19,6 +19,7 @@ import com.example.autoapp.helpers.CircleTransform;
 import com.example.autoapp.helpers.ItemClickSupport;
 import com.example.autoapp.models.Apps;
 
+import java.text.MessageFormat;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         ItemClickSupport.addTo(rv_apps).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                tv_in_progress.setText(objectsController.getApps(position).getAppName() + " is in progress");
+                tv_in_progress.setText(MessageFormat.format("{0} is in progress", objectsController.getApps(position).getAppName()));
                 if (fl_app_detail.getVisibility() == View.GONE) {
                     fl_app_detail.setVisibility(View.VISIBLE);
                 } else {
