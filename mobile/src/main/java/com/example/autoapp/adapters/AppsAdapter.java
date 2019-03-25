@@ -9,16 +9,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.autoapp.R;
-import com.example.autoapp.models.Apps;
-
-import java.util.ArrayList;
+import com.example.autoapp.models.AppsList;
 
 public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppsAdapterViewHolder> {
 
-    ArrayList<Apps> appsArrayList;
+    private AppsList appsList;
 
-    public AppsAdapter(Context context, ArrayList<Apps> appsArrayList) {
-        this.appsArrayList = appsArrayList;
+    /***
+     *
+     * @param context The context of the class in which the adapter is to be set
+     * @param appsList the Applist object
+     */
+    public AppsAdapter(Context context, AppsList appsList) {
+        this.appsList = appsList;
     }
 
     @NonNull
@@ -30,16 +33,17 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppsAdapterVie
 
     @Override
     public void onBindViewHolder(@NonNull AppsAdapterViewHolder appsAdapterViewHolder, int i) {
-        appsAdapterViewHolder.tv_app_name.setText(appsArrayList.get(i).getAppName());
+        appsAdapterViewHolder.tv_app_name.setText(appsList.getAppsArrayList().get(i).getAppName());
     }
 
     @Override
     public int getItemCount() {
-        return appsArrayList.size();
+        return appsList.getAppsCount();
     }
 
     class AppsAdapterViewHolder extends RecyclerView.ViewHolder {
         private TextView tv_app_name;
+
         AppsAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             tv_app_name = itemView.findViewById(R.id.tv_app_name);

@@ -15,4 +15,5 @@
     <string name="next">next</string>
     <string name="volume">volume</string>
     <string name="favourite">favourite</string>
+    <string name="work_in_progress">Work in progress…</string>
 </resources>

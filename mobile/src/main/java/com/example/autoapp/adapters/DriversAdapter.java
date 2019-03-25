@@ -14,15 +14,16 @@ import com.bumptech.glide.Glide;
 import com.example.autoapp.R;
 import com.example.autoapp.helpers.CircleTransform;
 import com.example.autoapp.models.Driver;
+import com.example.autoapp.models.DriverList;
 
 import java.util.ArrayList;
 
 public class DriversAdapter extends RecyclerView.Adapter<DriversAdapter.DriversAdapterViewHolder> {
 
     private Context context;
-    private ArrayList<Driver> driversList;
+    private DriverList driversList;
 
-    public DriversAdapter(Context context, ArrayList<Driver> driversList) {
+    public DriversAdapter(Context context, DriverList driversList) {
         this.context = context;
         this.driversList = driversList;
     }
@@ -37,9 +38,9 @@ public class DriversAdapter extends RecyclerView.Adapter<DriversAdapter.DriversA
     @Override
     public void onBindViewHolder(@NonNull DriversAdapterViewHolder driversAdapterViewHolder, int i) {
 
-        driversAdapterViewHolder.tv_drive_name.setText(driversList.get(i).getDriverName());
+        driversAdapterViewHolder.tv_drive_name.setText(driversList.getDriverArrayList().get(i).getDriverName());
         Glide.with(context)
-                .load(driversList.get(i).getDriverPhoto())
+                .load(driversList.getDriverArrayList().get(i).getDriverPhoto())
                 .transform(new CircleTransform())
                 .error(context.getDrawable(R.drawable.driver))
                 .into(driversAdapterViewHolder.iv_driver);
@@ -47,7 +48,7 @@ public class DriversAdapter extends RecyclerView.Adapter<DriversAdapter.DriversA
 
     @Override
     public int getItemCount() {
-        return driversList.size();
+        return driversList.getDriversCount();
     }
 
     class DriversAdapterViewHolder extends RecyclerView.ViewHolder {
