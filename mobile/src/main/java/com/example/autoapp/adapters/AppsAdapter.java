@@ -1,6 +1,5 @@
 package com.example.autoapp.adapters;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,10 +16,9 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppsAdapterVie
 
     /***
      *
-     * @param context The context of the class in which the adapter is to be set
      * @param appsList the Applist object
      */
-    public AppsAdapter(Context context, AppsList appsList) {
+    public AppsAdapter(AppsList appsList) {
         this.appsList = appsList;
     }
 

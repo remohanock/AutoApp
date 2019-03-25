@@ -1,6 +1,5 @@
 package com.example.autoapp.helpers;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
@@ -16,7 +15,7 @@ public class CircleTransform extends BitmapTransformation {
 
 
     @Override
-    protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
+    protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth, int outHeight) {
         return circleCrop(pool, toTransform);
     }
 
@@ -31,9 +30,9 @@ public class CircleTransform extends BitmapTransformation {
         Bitmap squared = Bitmap.createBitmap(source, x, y, size, size);
 
         Bitmap result = pool.get(size, size, Bitmap.Config.ARGB_8888);
-        if (result == null) {
+        /*if (result == null) {
             result = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
-        }
+        }*/
 
         Canvas canvas = new Canvas(result);
         Paint paint = new Paint();
@@ -43,7 +42,6 @@ public class CircleTransform extends BitmapTransformation {
         canvas.drawCircle(r, r, r, paint);
         return result;
     }
-
 
 
     @Override

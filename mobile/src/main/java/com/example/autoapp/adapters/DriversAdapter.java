@@ -13,10 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.autoapp.R;
 import com.example.autoapp.helpers.CircleTransform;
-import com.example.autoapp.models.Driver;
 import com.example.autoapp.models.DriverList;
-
-import java.util.ArrayList;
 
 public class DriversAdapter extends RecyclerView.Adapter<DriversAdapter.DriversAdapterViewHolder> {
 

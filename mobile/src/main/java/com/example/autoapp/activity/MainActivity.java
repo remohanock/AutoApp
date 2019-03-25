@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < appsNames.length; i++) {
             objectsController.setApps(new Apps(i, appsNames[i]));
         }
-        final AppsAdapter appsAdapter = new AppsAdapter(this, objectsController.getAppsList());
+        final AppsAdapter appsAdapter = new AppsAdapter(objectsController.getAppsList());
         rv_apps.setAdapter(appsAdapter);
         ItemClickSupport.addTo(rv_apps).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
