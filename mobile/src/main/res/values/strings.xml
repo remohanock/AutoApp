@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">AutoApp</string>
     <string name="driver_profile_picture">Driver profile picture</string>
     <string name="background">background</string>
@@ -16,4 +16,14 @@
     <string name="volume">volume</string>
     <string name="favourite">favourite</string>
     <string name="work_in_progress">Work in progress…</string>
+    <string name="label_play">Play</string>
+    <string name="label_pause">Pause</string>
+    <string name="label_next">Next</string>
+    <string name="label_previous">Previous</string>
+    <string name="hvac_temperature_template"><xliff:g id="temperature">%1$s</xliff:g>&#x00B0;</string>
+    <string name="fan_speed_max">MAX</string>
+    <string name="fan_speed_off">OFF</string>
+    <string name="hvac_invalid_temperature">--</string>
+    <string name="hvac_temperature_off">OFF</string>
+    <string name="source">Source</string>
 </resources>
