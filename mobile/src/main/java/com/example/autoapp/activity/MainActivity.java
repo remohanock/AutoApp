@@ -1,21 +1,38 @@
 package com.example.autoapp.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.media.AudioManager;
+import android.media.session.PlaybackState;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.RemoteException;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionManager;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,9 +42,12 @@ import com.example.autoapp.adapters.AppsAdapter;
 import com.example.autoapp.controller.ObjectsController;
 import com.example.autoapp.helpers.CircleTransform;
 import com.example.autoapp.helpers.ItemClickSupport;
+import com.example.autoapp.helpers.MusicLibrary;
 import com.example.autoapp.models.Apps;
+import com.example.autoapp.services.MyMusicService;
 
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,13 +62,18 @@ public class MainActivity extends AppCompatActivity {
     private View mp_notch_close;
     private ConstraintLayout cl_media_list;
     private ImageView iv_map;
-
+    private TextView tvSongName,tvArtistName;
+    private ImageView iv_PlayPause, iv_Previous, iv_Next;
     String driverImage = "";
     private ObjectsController objectsController;
     private int selectedPosition = -1;
     private boolean appsBarExpanded, mediaBarExpanded;
     private Animation animShow, animHide;
+    private MediaMetadataCompat mCurrentMetadata;
+    private PlaybackStateCompat mCurrentState;
 
+    private MediaBrowserCompat mMediaBrowser;
+    private ImageView iv_Volume;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +89,132 @@ public class MainActivity extends AppCompatActivity {
         setMediaPlayer();       //initialize the media player functionality
         initializeMap();        //setup the map and its functionality
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        mMediaBrowser =
+                new MediaBrowserCompat(
+                        this,
+                        new ComponentName(this, MyMusicService.class),
+                        mConnectionCallback,
+                        null);
+        mMediaBrowser.connect();
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
+        if (controller != null) {
+            controller.unregisterCallback(mMediaControllerCallback);
+        }
+        if (mMediaBrowser != null && mMediaBrowser.isConnected()) {
+            if (mCurrentMetadata != null) {
+                mMediaBrowser.unsubscribe(mCurrentMetadata.getDescription().getMediaId());
+            }
+            mMediaBrowser.disconnect();
+        }
+    }
+
+    private void updatePlaybackState(PlaybackStateCompat state) {
+        mCurrentState = state;
+        if (state == null
+                || state.getState() == PlaybackStateCompat.STATE_PAUSED
+                || state.getState() == PlaybackStateCompat.STATE_STOPPED) {
+            iv_PlayPause.setImageDrawable(
+                    ContextCompat.getDrawable(this, R.drawable.ic_play_arrow_black_36dp));
+        } else {
+            iv_PlayPause.setImageDrawable(
+                    ContextCompat.getDrawable(this, R.drawable.ic_pause_black_36dp));
+        }
+
+    }
+
+    private void updateMetadata(MediaMetadataCompat metadata) {
+        mCurrentMetadata = metadata;
+        tvSongName.setText(metadata == null ? "" : metadata.getDescription().getTitle());
+        tvArtistName.setText(metadata == null ? "" : metadata.getDescription().getSubtitle());
+        iv_album_art.setImageBitmap(
+                metadata == null
+                        ? null
+                        : MusicLibrary.getAlbumBitmap(
+                        this, metadata.getDescription().getMediaId()));
+
+    }
+
+
+    private final MediaBrowserCompat.ConnectionCallback mConnectionCallback =
+            new MediaBrowserCompat.ConnectionCallback() {
+                @Override
+                public void onConnected() {
+                    mMediaBrowser.subscribe(mMediaBrowser.getRoot(), mSubscriptionCallback);
+                    try {
+                        MediaControllerCompat mediaController =
+                                new MediaControllerCompat(
+                                        MainActivity.this, mMediaBrowser.getSessionToken());
+                        updatePlaybackState(mediaController.getPlaybackState());
+                        updateMetadata(mediaController.getMetadata());
+                        mediaController.registerCallback(mMediaControllerCallback);
+                        MediaControllerCompat.setMediaController(
+                                MainActivity.this, mediaController);
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            };
+
+    // Receives callbacks from the MediaController and updates the UI state,
+    // i.e.: Which is the current item, whether it's playing or paused, etc.
+    private final MediaControllerCompat.Callback mMediaControllerCallback =
+            new MediaControllerCompat.Callback() {
+                @Override
+                public void onMetadataChanged(MediaMetadataCompat metadata) {
+                    updateMetadata(metadata);
+
+                }
+
+                @Override
+                public void onPlaybackStateChanged(PlaybackStateCompat state) {
+                    updatePlaybackState(state);
+
+                }
+
+                @Override
+                public void onSessionDestroyed() {
+                    updatePlaybackState(null);
+
+                }
+            };
+
+    private final MediaBrowserCompat.SubscriptionCallback mSubscriptionCallback =
+            new MediaBrowserCompat.SubscriptionCallback() {
+                @Override
+                public void onChildrenLoaded(
+                        String parentId, List<MediaBrowserCompat.MediaItem> children) {
+                    onMediaLoaded(children);
+                }
+            };
+
+    /**
+     *Called once all media items have finished loading and initially sets the first media item from list
+     * @param media
+     */
+    private void onMediaLoaded(List<MediaBrowserCompat.MediaItem> media) {
+
+        if (mCurrentMetadata == null) {
+            mCurrentMetadata =
+                    MusicLibrary.getMetadata(
+                            MainActivity.this,
+                            MusicLibrary.getMediaItems().get(0).getMediaId());
+            updateMetadata(mCurrentMetadata);
+            updatePlaybackState(MediaControllerCompat.getMediaController(MainActivity.this).getPlaybackState());
+
+        }
+    }
+
 
     @SuppressLint("ClickableViewAccessibility")
     private void initializeMap() {
@@ -112,6 +263,58 @@ public class MainActivity extends AppCompatActivity {
                 collapseAllViews();
             }
         });
+        iv_Volume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                showVolumeControl();
+            }
+        });
+    }
+
+    /**
+     * Shows seekbar for volume in a dialog
+     */
+    public void showVolumeControl(){
+
+        final Dialog dialog  = new Dialog(MainActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.volume_dialog);
+        SeekBar seekbarVolume = dialog.findViewById(R.id.volume_seekbar);
+        final AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        seekbarVolume.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
+        seekbarVolume.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_ALARM));
+
+        seekbarVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                audioManager.setStreamVolume(AudioManager.STREAM_ALARM, progress, 0);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+                // Hide after some seconds
+                final Handler handler  = new Handler();
+                final Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
+                    }
+                };
+            }
+        });
+
+        dialog.show();
+
     }
 
     /***
@@ -190,6 +393,19 @@ public class MainActivity extends AppCompatActivity {
         iv_map = findViewById(R.id.iv_map);
         viewGroup = findViewById(R.id.ll_apps_detailed_view);
         fl_app_detail = viewGroup.findViewById(R.id.fl_app_detail);
+        iv_PlayPause =  findViewById(R.id.iv_playpause);
+        iv_PlayPause.setEnabled(true);
+        iv_Volume = findViewById(R.id.iv_volume);
+
+        iv_Next = findViewById(R.id.iv_next);
+        iv_Previous = findViewById(R.id.iv_prev);
+
+        iv_PlayPause.setOnClickListener(mPlaybackButtonListener);
+        iv_Next.setOnClickListener(mPlaybackButtonListener);
+        iv_Previous.setOnClickListener(mPlaybackButtonListener);
+
+        tvSongName =  findViewById(R.id.tv_songname);
+        tvArtistName =  findViewById(R.id.tv_artistname);
 //        scroll_main = viewGroup.findViewById(R.id.scroll_main);
         ImageView iv_profile = findViewById(R.id.iv_profile);
         Glide.with(this)
@@ -215,4 +431,66 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
+    /**
+     * Click listener for the play,next and previous buttons
+     */
+    private final View.OnClickListener mPlaybackButtonListener =
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switch (v.getId()){
+                        case R.id.iv_playpause:
+                            togglePauseOrPlay();
+                            break;
+                        case R.id.iv_next:
+                            MediaControllerCompat.getMediaController(MainActivity.this)
+                                    .getTransportControls()
+                                    .skipToNext();
+
+                            break;
+                        case R.id.iv_prev:
+                            MediaControllerCompat.getMediaController(MainActivity.this)
+                                    .getTransportControls()
+                                    .skipToPrevious();
+                            break;
+                    }
+
+                }
+            };
+
+    /**
+     * Plays or Pauses the media file based on its current state
+     */
+    public void togglePauseOrPlay(){
+
+        final int state =
+                mCurrentState == null
+                        ? PlaybackStateCompat.STATE_NONE
+                        : mCurrentState.getState();
+        if (state == PlaybackState.STATE_PAUSED
+                || state == PlaybackState.STATE_STOPPED
+                || state == PlaybackState.STATE_NONE) {
+
+            if (mCurrentMetadata == null) {
+                mCurrentMetadata =
+                        MusicLibrary.getMetadata(
+                                MainActivity.this,
+                                MusicLibrary.getMediaItems().get(0).getMediaId());
+                updateMetadata(mCurrentMetadata);
+            }
+            MediaControllerCompat.getMediaController(MainActivity.this)
+                    .getTransportControls()
+                    .playFromMediaId(
+                            mCurrentMetadata.getDescription().getMediaId(), null);
+        } else {
+            MediaControllerCompat.getMediaController(MainActivity.this)
+                    .getTransportControls()
+                    .pause();
+        }
+    }
+
+
+
 }

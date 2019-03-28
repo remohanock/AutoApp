@@ -272,12 +272,14 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
+                        android:id="@+id/tv_songname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/song_name"
                         android:textColor="@android:color/white" />
 
                     <TextView
+                        android:id="@+id/tv_artistname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/artist_name"
@@ -299,18 +301,21 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <ImageView
+                        android:id="@+id/iv_prev"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:contentDescription="@string/previous"
                         android:src="@android:drawable/ic_media_previous" />
 
                     <ImageView
+                        android:id="@+id/iv_playpause"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:contentDescription="@string/play_pause"
                         android:src="@android:drawable/ic_media_pause" />
 
                     <ImageView
+                        android:id="@+id/iv_next"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:contentDescription="@string/next"
@@ -319,7 +324,7 @@
                 </LinearLayout>
 
                 <ImageView
-                    android:id="@+id/imageView8"
+                    android:id="@+id/iv_volume"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginTop="10dp"
@@ -339,7 +344,7 @@
                     android:contentDescription="@string/favourite"
                     android:src="@drawable/ic_favorite_border_white_24dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/imageView8"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_volume"
                     app:layout_constraintStart_toEndOf="@+id/linearLayout2"
                     app:layout_constraintTop_toTopOf="parent" />
 

@@ -93,6 +93,9 @@ public class MusicLibrary {
     }
 
     public static String getPreviousSong(String currentMediaId) {
+        if(currentMediaId == null){
+            currentMediaId = music.firstKey();
+        }
         String prevMediaId = music.lowerKey(currentMediaId);
         if (prevMediaId == null) {
             prevMediaId = music.firstKey();
@@ -101,6 +104,10 @@ public class MusicLibrary {
     }
 
     public static String getNextSong(String currentMediaId) {
+
+        if(currentMediaId == null){
+            currentMediaId = music.firstKey();
+        }
         String nextMediaId = music.higherKey(currentMediaId);
         if (nextMediaId == null) {
             nextMediaId = music.firstKey();

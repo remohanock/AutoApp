@@ -16,12 +16,16 @@
 package com.example.autoapp.helpers;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -161,7 +165,12 @@ public class MediaNotificationManager extends BroadcastReceiver {
             return;
         }
         boolean isPlaying = state.getState() == PlaybackStateCompat.STATE_PLAYING;
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(mService);
+        String channelID = "";
+        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
+            //If above API 26 (Oreo) notification channel must be specified
+            createNotificationChannel("my_service", "My Background Service");
+        }
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(mService,channelID);
         MediaDescriptionCompat description = metadata.getDescription();
 
         notificationBuilder
@@ -214,5 +223,19 @@ public class MediaNotificationManager extends BroadcastReceiver {
         openUI.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         return PendingIntent.getActivity(
                 mService, REQUEST_CODE, openUI, PendingIntent.FLAG_CANCEL_CURRENT);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private String createNotificationChannel(String channelId, String channelName){
+
+        NotificationChannel chan = new NotificationChannel(channelId,
+                channelName, NotificationManager.IMPORTANCE_NONE);
+
+        chan.setLightColor(Color.BLUE);
+        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+
+        mNotificationManager.createNotificationChannel(chan);
+
+        return  channelId;
     }
 }

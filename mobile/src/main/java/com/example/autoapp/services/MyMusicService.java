@@ -94,8 +94,8 @@ public class MyMusicService extends MediaBrowserServiceCompat {
                                 mSession.setPlaybackState(state);
 
                                 // TODO: Uncomment the following line to show a notification.
-                                mediaNotificationManager.update(
-                                        mPlayback.getCurrentMedia(), state, getSessionToken());
+                               /* mediaNotificationManager.update(
+                                        mPlayback.getCurrentMedia(), state, getSessionToken());*/
                             }
                         });
     }
