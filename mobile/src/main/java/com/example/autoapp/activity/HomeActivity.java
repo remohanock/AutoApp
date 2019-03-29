@@ -30,6 +30,11 @@ public class HomeActivity extends AppCompatActivity {
         bindControls();
     }
 
+    @Override
+    public void onBackPressed() {
+        //do nothing on back pressed to make it behave as launcher
+    }
+
     /***
      * set the drivers list for the time being with the count set to the limit of i in the for loop
      */
