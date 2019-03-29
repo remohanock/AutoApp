@@ -36,6 +36,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -530,48 +531,68 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Shows seekbar for volume in a dialog
      */
-    public void showVolumeControl() {
+    PopupWindow popupWindow;
+    public void showVolumeControl(){
 
-        final Dialog dialog = new Dialog(MainActivity.this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.volume_dialog);
-        SeekBar seekbarVolume = dialog.findViewById(R.id.volume_seekbar);
-        final AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        if (audioManager != null) {
-            seekbarVolume.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
-            seekbarVolume.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_ALARM));
+        if(popupWindow!=null && popupWindow.isShowing()){
+            popupWindow.dismiss();
+            return;
         }
+        LayoutInflater layoutInflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dialog = layoutInflater.inflate(R.layout.volume_dialog,null);
+
+        popupWindow = new PopupWindow(dialog, 100, 350);
+
+        //display the popup window with volume seekbar
+        popupWindow.showAsDropDown(iv_Volume,50,-450 );
+
+        SeekBar seekbarVolume = dialog.findViewById(R.id.volume_seekbar);
+        final AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        seekbarVolume.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        seekbarVolume.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+
+        //Declare handler and runnable to Hide popup after some seconds in onStopTrackingTouch
+        final Handler handler  = new Handler();
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (popupWindow.isShowing()) {
+                    popupWindow.dismiss();
+                }
+            }
+        };
+
+        handler.postDelayed(runnable,5000);
+
         seekbarVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (audioManager != null) {
-                    audioManager.setStreamVolume(AudioManager.STREAM_ALARM, progress, 0);
-                }
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+                seekBar.setProgress(progress);
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
 
+                handler.removeCallbacks(runnable);
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
-                // Hide after some seconds
-                final Handler handler = new Handler();
-                final Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dialog.isShowing()) {
-                            dialog.dismiss();
-                        }
-                    }
-                };
+
+                handler.postDelayed(runnable,3000);
+
             }
         });
 
-        dialog.show();
+        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                handler.removeCallbacks(runnable);
+            }
+        });
 
     }
 
