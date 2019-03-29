@@ -44,6 +44,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
     private static final int NOTIFICATION_ID = 412;
     private static final int REQUEST_CODE = 100;
 
+
     private static final String ACTION_PAUSE = "com.example.android.musicplayercodelab.pause";
     private static final String ACTION_PLAY = "com.example.android.musicplayercodelab.play";
     private static final String ACTION_NEXT = "com.example.android.musicplayercodelab.next";

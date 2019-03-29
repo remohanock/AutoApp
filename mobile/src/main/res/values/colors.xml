@@ -9,6 +9,9 @@
     <color name="temperature_4">#7AA9F6</color>
     <color name="temperature_5">#00AFFF</color>
 
+    <color name="white">#ffffff</color>
+    <color name="navy">#2E4B77</color>
+
     <color name="hvac_module_background_color">#99222B31</color>
 
     <color name="hvac_icon_color">#F5F5F5</color>

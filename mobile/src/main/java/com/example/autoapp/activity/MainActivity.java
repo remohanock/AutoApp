@@ -21,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionManager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,6 +32,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -74,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
     private MediaBrowserCompat mMediaBrowser;
     private ImageView iv_Volume;
+    private ConstraintLayout mediaLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
+        //Initializes media browser in On Start
         mMediaBrowser =
                 new MediaBrowserCompat(
                         this,
@@ -107,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
+
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
         if (controller != null) {
             controller.unregisterCallback(mMediaControllerCallback);
@@ -119,6 +124,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Updates the play/pause icon based on playback state
+     * @param state
+     */
     private void updatePlaybackState(PlaybackStateCompat state) {
         mCurrentState = state;
         if (state == null
@@ -133,6 +142,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Updates the song infomation to the UI
+     * @param metadata
+     */
     private void updateMetadata(MediaMetadataCompat metadata) {
         mCurrentMetadata = metadata;
         tvSongName.setText(metadata == null ? "" : metadata.getDescription().getTitle());
@@ -275,45 +288,68 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Shows seekbar for volume in a dialog
      */
+    PopupWindow popupWindow;
     public void showVolumeControl(){
 
-        final Dialog dialog  = new Dialog(MainActivity.this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.volume_dialog);
+        if(popupWindow!=null && popupWindow.isShowing()){
+            popupWindow.dismiss();
+            return;
+        }
+        LayoutInflater layoutInflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dialog = layoutInflater.inflate(R.layout.volume_dialog,null);
+
+        popupWindow = new PopupWindow(dialog, 100, 350);
+
+        //display the popup window with volume seekbar
+        popupWindow.showAsDropDown(iv_Volume,50,-450 );
+
         SeekBar seekbarVolume = dialog.findViewById(R.id.volume_seekbar);
         final AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        seekbarVolume.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
-        seekbarVolume.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_ALARM));
+        seekbarVolume.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        seekbarVolume.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+
+        //Declare handler and runnable to Hide popup after some seconds in onStopTrackingTouch
+        final Handler handler  = new Handler();
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (popupWindow.isShowing()) {
+                    popupWindow.dismiss();
+                }
+            }
+        };
+
+        handler.postDelayed(runnable,5000);
 
         seekbarVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                audioManager.setStreamVolume(AudioManager.STREAM_ALARM, progress, 0);
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+                seekBar.setProgress(progress);
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
 
+                handler.removeCallbacks(runnable);
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
-                // Hide after some seconds
-                final Handler handler  = new Handler();
-                final Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dialog.isShowing()) {
-                            dialog.dismiss();
-                        }
-                    }
-                };
+
+                handler.postDelayed(runnable,3000);
+
             }
         });
 
-        dialog.show();
+        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                handler.removeCallbacks(runnable);
+            }
+        });
 
     }
 
@@ -406,6 +442,7 @@ public class MainActivity extends AppCompatActivity {
 
         tvSongName =  findViewById(R.id.tv_songname);
         tvArtistName =  findViewById(R.id.tv_artistname);
+        mediaLayout = findViewById(R.id.constraintLayout3);
 //        scroll_main = viewGroup.findViewById(R.id.scroll_main);
         ImageView iv_profile = findViewById(R.id.iv_profile);
         Glide.with(this)
