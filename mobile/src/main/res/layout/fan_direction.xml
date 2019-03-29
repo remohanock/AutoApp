@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_marginStart="@dimen/hvac_fan_speed_bar_margin"
+    android:layout_marginEnd="@dimen/hvac_fan_speed_bar_margin"
+    android:layout_marginBottom="@dimen/hvac_fan_speed_bar_margin">
+
+    <ImageView
+        android:id="@+id/direction_1"
+        style="@style/HvacButton.FanDirection"
+        android:src="@drawable/ic_fan_direction_1_off"
+        android:contentDescription="@string/fan_direction_1" />
+
+    <View style="@style/HvacSpacerView" />
+
+    <ImageView
+        android:id="@+id/direction_2"
+        style="@style/HvacButton.FanDirection"
+        android:src="@drawable/ic_fan_direction_2_off"
+        android:contentDescription="@string/fan_direction_2" />
+
+    <View style="@style/HvacSpacerView" />
+
+    <ImageView
+        android:id="@+id/direction_3"
+        style="@style/HvacButton.FanDirection"
+        android:src="@drawable/ic_fan_direction_3_off"
+        android:contentDescription="@string/fan_direction_3" />
+
+    <View style="@style/HvacSpacerView" />
+
+    <ImageView
+        android:id="@+id/direction_4"
+        style="@style/HvacButton.FanDirection"
+        android:src="@drawable/ic_fan_direction_4_off"
+        android:contentDescription="@string/fan_direction_4" />
+</LinearLayout>

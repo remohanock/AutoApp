@@ -26,4 +26,14 @@
     <string name="hvac_invalid_temperature">--</string>
     <string name="hvac_temperature_off">OFF</string>
     <string name="source">Source</string>
+    <string name="left_temp_increase">left temp increase</string>
+    <string name="left_temp_decrease">left temp decrease</string>
+    <string name="fifty">50</string>
+    <string name="ac_auto_button">AC Auto Button</string>
+    <string name="fan_direction_1">fan_direction_1</string>
+    <string name="fan_direction_2">fan_direction_2</string>
+    <string name="fan_direction_3">fan_direction_3</string>
+    <string name="fan_direction_4">fan_direction_4</string>
+    <string name="temperature_increase_button">temperature increase button</string>
+    <string name="temperature_decrease_button">temperature decrease button</string>
 </resources>

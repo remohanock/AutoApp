@@ -22,4 +22,6 @@
     <color name="hvac_fanspeed_off_enabled_text_color">#13181C</color>
     <color name="hvac_fanspeed_off_disabled_text_color">#89F5F5F5</color>
     <color name="hvac_scrim_color">#3F000000</color>
+
+    <color name="fan_speed_custom_color">#0090E1</color>
 </resources>

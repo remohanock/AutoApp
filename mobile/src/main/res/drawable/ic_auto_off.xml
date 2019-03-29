@@ -16,8 +16,9 @@
 */
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-        android:width="108dp"
-        android:height="108dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:width="68dp"
+        android:height="68dp"
         android:viewportWidth="108"
         android:viewportHeight="108">
 
@@ -42,7 +43,8 @@ C72.1374,61.1185 73.0434,62.1615 74.2154,62.8945 C75.3874,63.6265
 76.7224,63.9925 78.2204,63.9925 C79.7354,63.9925 81.0754,63.6265 82.2384,62.8945
 C83.4024,62.1615 84.2974,61.1125 84.9234,59.7455 C85.5504,58.3785
 85.8634,56.7895 85.8634,54.9785 L85.8634,53.9505 C85.8544,52.1475
-85.5334,50.5665 84.8984,49.2085 L84.8984,49.2085 Z" />
+85.5334,50.5665 84.8984,49.2085 L84.8984,49.2085 Z"
+        tools:ignore="VectorPath" />
     <path
             android:fillColor="#8FF5F5F5"
             android:strokeWidth="1"

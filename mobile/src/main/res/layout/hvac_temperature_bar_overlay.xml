@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+ * Copyright (c) 2016, The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+-->
+
+<!-- The HVAC panel is added as an overlay in the WindowManager, so animating
+the container height would cause janking. The FrameLayout allows us to maintain constant height
+and animate only the children -->
+<com.example.autoapp.customclass.TemperatureBarOverlay xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="60dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="10dp">
+
+    <TextView
+        android:id="@+id/floating_temperature_text"
+        style="@style/HvacTemperature"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="@dimen/hvac_floating_text_left_margin"
+        android:layout_marginBottom="@dimen/temperature_bar_floating_text_bottom_margin"
+        android:textColor="@color/hvac_temperature_floating_text_color"
+        android:textSize="@dimen/temperature_bar_floating_text_size" />
+
+    <TextView
+        android:id="@+id/temperature_off_text"
+        style="@style/HvacTemperatureOff"
+        android:background="@drawable/hvac_off_text_bg"
+        android:includeFontPadding="false"
+        android:textColor="@color/hvac_background_color"
+        android:textSize="@dimen/temperature_bar_off_text_size"
+        android:textStyle="bold"
+        android:visibility="gone" />
+    <!-- The collapseable temperature bar -->
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/temperature_bar"
+        android:layout_width="@dimen/temperature_bar_width_collapsed"
+        android:layout_height="@dimen/temperature_bar_collapsed_height"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/temperature_bar_background">
+
+        <ImageView
+            android:id="@+id/increase_button"
+            style="@style/HvacTemperatureControlIcon"
+            android:layout_gravity="top"
+            android:layout_marginTop="@dimen/temperature_bar_icon_margin"
+            android:src="@drawable/ic_increase_icon"
+            android:contentDescription="@string/temperature_increase_button" />
+
+        <TextView
+            android:id="@+id/temperature_text"
+            style="@style/HvacTemperature"
+            android:layout_gravity="center_vertical" />
+
+        <ImageView
+            android:id="@+id/decrease_button"
+            style="@style/HvacTemperatureControlIcon"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="@dimen/temperature_bar_icon_margin"
+            android:src="@drawable/ic_decrease_icon"
+            android:contentDescription="@string/temperature_decrease_button" />
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/close_button"
+        android:layout_width="@dimen/temperature_bar_close_icon_dimen"
+        android:layout_height="@dimen/temperature_bar_close_icon_dimen"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="@dimen/hvac_close_button_bottom_margin"
+        android:scaleType="center"
+        android:src="@drawable/ic_down_arrow"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
+</com.example.autoapp.customclass.TemperatureBarOverlay>

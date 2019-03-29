@@ -16,7 +16,8 @@
 */
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-        android:width="108dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:width="108dp"
         android:height="108dp"
         android:viewportWidth="108"
         android:viewportHeight="108">
@@ -80,7 +81,7 @@ C33.4622,34.1902 34.0672,35.2032 34.0672,37.0162 C34.0672,37.0442
                 </group>
             </group>
             <path
-                    android:fillColor="#80CBC4"
+                    android:fillColor="#0090E1"
                     android:strokeWidth="1"
                     android:pathData="M96.2360712,28.8658223 C95.25103,28.8658223 94.2833779,28.3876215
 93.6901028,27.5014524 C91.9767653,24.9400312 90.0097515,22.5335347
@@ -145,7 +146,8 @@ C96.8433598,87.8949094 94.6257385,90.6102224 92.1830818,93.0745575
 C89.7404251,95.5409582 87.0522753,97.7801361 84.1933031,99.7311541
 C81.306713,101.700763 78.2196368,103.39254 75.0200429,104.758976
 C71.7600987,106.151232 68.3477441,107.220213 64.8791306,107.935964
-C64.6714843,107.979343 64.464861,108 64.2613062,108 Z" />
+C64.6714843,107.979343 64.464861,108 64.2613062,108 Z"
+                tools:ignore="VectorPath" />
         </group>
     </group>
 </vector>
