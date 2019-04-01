@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean mAutoMode;
     private Drawable mAutoOnDrawable;
     private Drawable mAutoOffDrawable;
+    private ImageView iv_Favourite;
 
 
     @Override
@@ -261,6 +262,12 @@ public class MainActivity extends AppCompatActivity {
                         ? null
                         : MusicLibrary.getAlbumBitmap(
                         this, metadata.getDescription().getMediaId()));
+
+        iv_Favourite.setImageDrawable(
+                ContextCompat.getDrawable(this,
+                        metadata == null
+                                ? R.drawable.ic_favorite_border_white_24dp
+                                : MusicLibrary.getFavouriteBitmap(metadata.getDescription().getMediaId())));
 
     }
 
@@ -526,8 +533,25 @@ public class MainActivity extends AppCompatActivity {
                 showVolumeControl();
             }
         });
+
+        iv_Favourite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                toggleFavourite(mCurrentMetadata.getDescription().getMediaId());
+            }
+        });
     }
 
+    /**
+     * Toggles favourite on or off.
+     * @param mediaId
+     */
+    public void toggleFavourite(String mediaId){
+
+        iv_Favourite.setImageDrawable(
+                ContextCompat.getDrawable(this,MusicLibrary.toggleFavourite(mediaId)));
+    }
     /**
      * Shows seekbar for volume in a dialog
      */
@@ -675,6 +699,7 @@ public class MainActivity extends AppCompatActivity {
         iv_PlayPause = findViewById(R.id.iv_playpause);
         iv_PlayPause.setEnabled(true);
         iv_Volume = findViewById(R.id.iv_volume);
+        iv_Favourite = findViewById(R.id.iv_favourite);
         iv_Next = findViewById(R.id.iv_next);
         iv_Previous = findViewById(R.id.iv_prev);
         iv_PlayPause.setOnClickListener(mPlaybackButtonListener);

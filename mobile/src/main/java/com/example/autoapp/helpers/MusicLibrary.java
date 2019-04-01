@@ -34,6 +34,7 @@ public class MusicLibrary {
     private static final TreeMap<String, MediaMetadataCompat> music = new TreeMap<>();
     private static final HashMap<String, Integer> albumRes = new HashMap<>();
     private static final HashMap<String, Integer> musicRes = new HashMap<>();
+    private static final HashMap<String, Integer> favourites = new HashMap<>();
 
     static {
         createMediaMetadataCompat(
@@ -80,6 +81,41 @@ public class MusicLibrary {
 
     public static Bitmap getAlbumBitmap(Context ctx, String mediaId) {
         return BitmapFactory.decodeResource(ctx.getResources(), MusicLibrary.getAlbumRes(mediaId));
+    }
+
+    /**
+     * switches the value of media id to 1 or 0 depending on current state.
+     * 1 - favourite , 0 - non favourite
+     * @param mediaID
+     * @return
+     */
+    public static int toggleFavourite(String mediaID){
+        if(favourites.containsKey(mediaID) && favourites.get(mediaID)!=null) {
+            if (favourites.get(mediaID) == 0) {
+                favourites.put(mediaID,1);
+                return R.drawable.ic_favorite_white_24dp;
+            }else{
+                favourites.put(mediaID,0);
+                return R.drawable.ic_favorite_border_white_24dp;
+            }
+        }else{
+            favourites.put(mediaID,0);
+            return R.drawable.ic_favorite_border_white_24dp;
+        }
+    }
+
+    /**
+     * Returns the bitmap according to favourite status of the media item
+     * @param mediaID
+     * @return
+     */
+    public static int getFavouriteBitmap(String mediaID){
+        if(favourites.containsKey(mediaID) && favourites.get(mediaID)!=null) {
+
+            return favourites.get(mediaID) == 1 ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_border_white_24dp;
+        }else{
+            return R.drawable.ic_favorite_border_white_24dp;
+        }
     }
 
     public static List<MediaBrowserCompat.MediaItem> getMediaItems() {
@@ -167,5 +203,6 @@ public class MusicLibrary {
                         .build());
         albumRes.put(mediaId, albumArtResId);
         musicRes.put(mediaId, musicResId);
+        favourites.put(mediaId,0);
     }
 }
