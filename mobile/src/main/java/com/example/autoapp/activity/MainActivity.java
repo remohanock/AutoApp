@@ -570,6 +570,7 @@ public class MainActivity extends AppCompatActivity {
         setSourceOptions();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void setSourceOptions() {
 
         final List<String> items = Arrays.asList("Bluetooth","Radio","AUX","Storage");
@@ -583,6 +584,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         wheelView.setItems(items);
+        wheelView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        scroll_main.requestDisallowInterceptTouchEvent(true);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        scroll_main.requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
     /**
@@ -752,7 +767,7 @@ public class MainActivity extends AppCompatActivity {
 
         tvSongName = findViewById(R.id.tv_songname);
         tvArtistName = findViewById(R.id.tv_artistname);
-//        scroll_main = viewGroup.findViewById(R.id.scroll_main);
+        scroll_main = viewGroup.findViewById(R.id.scroll_main);
         ImageView iv_profile = findViewById(R.id.iv_profile);
         Glide.with(this)
                 .load(driverImage)
