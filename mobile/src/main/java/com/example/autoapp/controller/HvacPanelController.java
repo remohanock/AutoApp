@@ -229,6 +229,7 @@ public class HvacPanelController {
             }
         }
     }
+
     /**
      * Play necessary animations between {@link HvacPanelState} transitions
      */
