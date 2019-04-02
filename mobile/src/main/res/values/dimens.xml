@@ -8,7 +8,7 @@
 
     <dimen name="temperature_side_margin">32dp</dimen>
 
-    <dimen name="temperature_control_arrow_height">28dp</dimen>
+    <dimen name="temperature_control_arrow_height">80dp</dimen>
 
     <dimen name="temperature_bar_text_size">25sp</dimen>
     <dimen name="temperature_bar_floating_text_size">32sp</dimen>
@@ -17,17 +17,17 @@
     <dimen name="hvac_panel_row_animation_height_shift">0dp</dimen>
 
     <dimen name="temperature_bar_width_collapsed">96dp</dimen>
-    <dimen name="temperature_bar_width_expanded">96dp</dimen>
+    <dimen name="temperature_bar_width_expanded">60dp</dimen>
     <dimen name="temperature_bar_collapsed_height">96dp</dimen>
-    <dimen name="temperature_bar_expanded_height">356dp</dimen>
+    <dimen name="temperature_bar_expanded_height">256dp</dimen>
     <dimen name="temperature_bar_icon_margin">20dp</dimen>
     <dimen name="temperature_bar_close_icon_dimen">96dp</dimen>
 
     <dimen name="temperature_bar_bg_radius">54dp</dimen>
-    <dimen name="temperature_bar_floating_text_bottom_margin">50dp</dimen>
-    <dimen name="temperature_bar_off_text_bottom_margin">56dp</dimen>
+    <dimen name="temperature_bar_floating_text_bottom_margin">8dp</dimen>
+    <dimen name="temperature_bar_off_text_bottom_margin">20dp</dimen>
 
-    <dimen name="temperature_off_text_bg_width">72dp</dimen>
+    <dimen name="temperature_off_text_bg_width">59dp</dimen>
     <dimen name="temperature_off_text_bg_height">24dp</dimen>
 
     <dimen name="hvac_panel_row_margin">8dp</dimen>
@@ -55,7 +55,7 @@
     <dimen name="hvac_fan_speed_dot_expanded_size">150dp</dimen>
     <dimen name="hvac_fan_speed_top_margin">15dp</dimen>
 
-    <dimen name="hvac_floating_text_left_margin">31dp</dimen>
+    <dimen name="hvac_floating_text_left_margin">8dp</dimen>
     <dimen name="hvac_text_left_margin">26dp</dimen>
     <dimen name="hvac_close_button_bottom_margin">0dp</dimen>
 </resources>

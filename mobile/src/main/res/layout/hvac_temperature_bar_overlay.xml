@@ -21,16 +21,13 @@ and animate only the children -->
 <com.example.autoapp.customclass.TemperatureBarOverlay xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="60dp"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="10dp">
+    android:layout_height="250dp">
 
     <TextView
         android:id="@+id/floating_temperature_text"
         style="@style/HvacTemperature"
-        android:layout_gravity="bottom"
-        android:layout_marginStart="@dimen/hvac_floating_text_left_margin"
-        android:layout_marginBottom="@dimen/temperature_bar_floating_text_bottom_margin"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:textColor="@color/hvac_temperature_floating_text_color"
         android:textSize="@dimen/temperature_bar_floating_text_size" />
 
@@ -46,9 +43,9 @@ and animate only the children -->
     <!-- The collapseable temperature bar -->
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/temperature_bar"
-        android:layout_width="@dimen/temperature_bar_width_collapsed"
-        android:layout_height="@dimen/temperature_bar_collapsed_height"
-        android:layout_gravity="center_horizontal"
+        android:layout_width="@dimen/temperature_bar_width_expanded"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
         android:background="@drawable/temperature_bar_background">
 
         <ImageView
@@ -62,6 +59,8 @@ and animate only the children -->
         <TextView
             android:id="@+id/temperature_text"
             style="@style/HvacTemperature"
+            android:gravity="center"
+            android:layout_marginStart="12dp"
             android:layout_gravity="center_vertical" />
 
         <ImageView

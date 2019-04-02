@@ -101,7 +101,7 @@ public class TemperatureBarOverlay extends FrameLayout {
         mText = findViewById(R.id.temperature_text);
         mOffText = findViewById(R.id.temperature_off_text);
         mTemperatureBar = findViewById(R.id.temperature_bar);
-        mTemperatureBar.setTranslationY(mCollapsedYShift);
+//        mTemperatureBar.setTranslationY(mCollapsedYShift);
         mCloseButton = findViewById(R.id.close_button);
         mText.setText(getContext().getString(R.string.hvac_temperature_template,
                 mInvalidTemperature));
@@ -110,14 +110,20 @@ public class TemperatureBarOverlay extends FrameLayout {
                         mInvalidTemperature));
         mIncreaseButton.setOnTouchListener(new PressAndHoldTouchListener(temperatureClickListener));
         mDecreaseButton.setOnTouchListener(new PressAndHoldTouchListener(temperatureClickListener));
-        if (!mIsOpen) {
+        /*if (!mIsOpen) {
             mIncreaseButton.setAlpha(BUTTON_ALPHA_COLLAPSED);
             mDecreaseButton.setAlpha(BUTTON_ALPHA_COLLAPSED);
             mText.setAlpha(BUTTON_ALPHA_COLLAPSED);
             mDecreaseButton.setVisibility(GONE);
             mIncreaseButton.setVisibility(GONE);
             mText.setVisibility(GONE);
-        }
+        }*/
+        mIncreaseButton.setAlpha(BUTTON_ALPHA_EXPANDED);
+        mDecreaseButton.setAlpha(BUTTON_ALPHA_EXPANDED);
+        mText.setAlpha(BUTTON_ALPHA_EXPANDED);
+        mDecreaseButton.setVisibility(VISIBLE);
+        mIncreaseButton.setVisibility(VISIBLE);
+        mText.setVisibility(VISIBLE);
     }
     public void setTemperatureChangeListener(TemperatureAdjustClickListener listener) {
         mListener =  listener;

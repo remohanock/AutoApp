@@ -30,11 +30,11 @@
             android:background="@drawable/hvac_panel_button_bg" />
     </FrameLayout>
 
-    <LinearLayout
+    <!--<LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/temperature_bar_background"
         android:backgroundTint="@color/temperature_5"
@@ -64,14 +64,25 @@
             android:contentDescription="@string/left_temp_decrease"
             android:src="@drawable/ic_decrease_icon" />
 
-    </LinearLayout>
+    </LinearLayout>-->
 
-    <LinearLayout
+    <include
+        android:id="@+id/linearLayout3"
+        layout="@layout/hvac_temperature_bar_overlay"
+        android:layout_width="60dp"
+        android:layout_height="250dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <!--<LinearLayout
         android:id="@+id/linearLayout4"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/temperature_bar_background"
         android:backgroundTint="@color/temperature_5"
         android:orientation="vertical"
@@ -100,7 +111,17 @@
             android:contentDescription="@string/left_temp_decrease"
             android:src="@drawable/ic_decrease_icon" />
 
-    </LinearLayout>
+    </LinearLayout>-->
+
+    <include
+        android:id="@+id/linearLayout4"
+        layout="@layout/hvac_temperature_bar_overlay"
+        android:layout_width="60dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.example.autoapp.customclass.HvacPanelRow
         android:id="@+id/linearLayout5"
@@ -115,76 +136,6 @@
         app:layout_constraintEnd_toStartOf="@+id/ac_button"
         app:layout_constraintStart_toEndOf="@+id/recycle_air_button"
         app:layout_constraintTop_toTopOf="@id/hvac_center_panel">
-
-
-        <!--<android.support.constraint.ConstraintLayout-->
-        <!--android:id="@+id/segment_container"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="@dimen/hvac_fan_speed_bar_height"-->
-        <!--android:layout_marginStart="@dimen/hvac_fan_speed_bar_margin"-->
-        <!--android:layout_marginEnd="@dimen/hvac_fan_speed_bar_margin"-->
-        <!--android:background="@drawable/fan_speed_inset"-->
-        <!--android:orientation="horizontal">-->
-
-        <!--<TextView-->
-        <!--android:id="@+id/fan_off"-->
-        <!--style="@style/HvacFanSpeedText"-->
-        <!--android:layout_marginStart="@dimen/hvac_fan_speed_bar_end_button_margin"-->
-        <!--android:layout_marginEnd="@dimen/hvac_fan_speed_bar_segment_margin"-->
-        <!--android:text="@string/fan_speed_off"-->
-        <!--app:layout_constraintEnd_toStartOf="@+id/fan_speed_1"-->
-        <!--app:layout_constraintHorizontal_bias="0.5"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent"-->
-        <!--tools:layout_editor_absoluteY="20dp" />-->
-
-        <!--<com.example.autoapp.customclass.FanSpeedBarSegment-->
-        <!--android:id="@+id/fan_speed_1"-->
-        <!--style="@style/HvacFanSpeedBar"-->
-        <!--app:layout_constraintEnd_toStartOf="@+id/fan_speed_2"-->
-        <!--app:layout_constraintHorizontal_bias="0.5"-->
-        <!--app:layout_constraintStart_toEndOf="@+id/fan_off"-->
-        <!--app:layout_constraintTop_toTopOf="parent"-->
-        <!--tools:layout_editor_absoluteY="20dp" />-->
-
-        <!--<com.example.autoapp.customclass.FanSpeedBarSegment-->
-        <!--android:id="@+id/fan_speed_2"-->
-        <!--style="@style/HvacFanSpeedBar"-->
-        <!--app:layout_constraintEnd_toStartOf="@+id/fan_speed_3"-->
-        <!--app:layout_constraintHorizontal_bias="0.5"-->
-        <!--app:layout_constraintStart_toEndOf="@+id/fan_speed_1"-->
-        <!--app:layout_constraintTop_toTopOf="parent"-->
-        <!--tools:layout_editor_absoluteY="20dp" />-->
-
-        <!--<com.example.autoapp.customclass.FanSpeedBarSegment-->
-        <!--android:id="@+id/fan_speed_3"-->
-        <!--style="@style/HvacFanSpeedBar"-->
-        <!--app:layout_constraintEnd_toStartOf="@+id/fan_speed_4"-->
-        <!--app:layout_constraintHorizontal_bias="0.5"-->
-        <!--app:layout_constraintStart_toEndOf="@+id/fan_speed_2"-->
-        <!--app:layout_constraintTop_toTopOf="parent"-->
-        <!--tools:layout_editor_absoluteY="20dp" />-->
-
-        <!--<com.example.autoapp.customclass.FanSpeedBarSegment-->
-        <!--android:id="@+id/fan_speed_4"-->
-        <!--style="@style/HvacFanSpeedBar"-->
-        <!--app:layout_constraintEnd_toStartOf="@+id/fan_max"-->
-        <!--app:layout_constraintHorizontal_bias="0.5"-->
-        <!--app:layout_constraintStart_toEndOf="@+id/fan_speed_3"-->
-        <!--app:layout_constraintTop_toTopOf="parent"-->
-        <!--tools:layout_editor_absoluteY="20dp" />-->
-
-        <!--<TextView-->
-        <!--android:id="@+id/fan_max"-->
-        <!--style="@style/HvacFanSpeedText"-->
-        <!--android:layout_marginEnd="8dp"-->
-        <!--android:text="@string/fan_speed_max"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintHorizontal_bias="0.5"-->
-        <!--app:layout_constraintStart_toEndOf="@+id/fan_speed_4"-->
-        <!--app:layout_constraintTop_toTopOf="parent"-->
-        <!--tools:layout_editor_absoluteY="20dp" />-->
-        <!--</android.support.constraint.ConstraintLayout>-->
 
         <com.example.autoapp.customclass.FanSpeedBar
             android:id="@+id/fan_speed_bar"
@@ -210,10 +161,12 @@
         android:layout_height="@dimen/hvac_panel_group_height"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/hvac_panel_button_bg"
         android:scaleType="center"
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout5"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toEndOf="@+id/linearLayout3"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -229,7 +182,7 @@
         android:scaleType="center"
         app:layout_constraintBottom_toBottomOf="@+id/view_separator"
         app:layout_constraintEnd_toStartOf="@id/linearLayout4"
-        app:layout_constraintStart_toEndOf="@+id/linearLayout5"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
@@ -244,13 +197,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="@dimen/hvac_panel_margin"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="@dimen/hvac_panel_margin"
-        android:layout_marginEnd="@dimen/hvac_panel_margin"
+        android:layout_marginEnd="8dp"
         android:alpha="1"
-        android:translationY="@dimen/hvac_panel_row_animation_height_shift"
-        app:layout_constraintEnd_toStartOf="@+id/linearLayout4"
-        app:layout_constraintStart_toEndOf="@+id/linearLayout3"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@id/view_separator">
 
         <com.example.autoapp.customclass.SeatWarmerButton
@@ -273,9 +225,9 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@drawable/hvac_panel_button_bg"
+            android:contentDescription="@string/ac_auto_button"
             android:scaleType="center"
-            android:src="@drawable/ic_auto_off"
-            android:contentDescription="@string/ac_auto_button" />
+            android:src="@drawable/ic_auto_off" />
 
         <com.example.autoapp.customclass.ToggleButton
             android:id="@+id/rear_defroster"
@@ -290,5 +242,19 @@
             android:layout_marginStart="@dimen/hvac_panel_margin"
             android:src="@drawable/ic_seat_heat_off" />
     </com.example.autoapp.customclass.HvacPanelRow>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.25" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
 
 </android.support.constraint.ConstraintLayout>

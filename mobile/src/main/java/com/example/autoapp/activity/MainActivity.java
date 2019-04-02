@@ -1,7 +1,6 @@
 package com.example.autoapp.activity;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.res.Resources;
@@ -29,7 +28,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -180,6 +178,9 @@ public class MainActivity extends AppCompatActivity {
                 mDriverSeatWarmer);
         mAutoButton = findViewById(R.id.auto_button);
         mAutoButton.setOnClickListener(mAutoButtonClickListener);
+        TemperatureBarOverlay linearLayout3 = findViewById(R.id.linearLayout3);
+        TemperatureBarOverlay linearLayout4 = findViewById(R.id.linearLayout4);
+        TemperatureController temperatureController = new TemperatureController(linearLayout3,linearLayout4);
     }
 
     private View.OnClickListener mAutoButtonClickListener = new View.OnClickListener() {
@@ -210,6 +211,10 @@ public class MainActivity extends AppCompatActivity {
             mTopPanelMaxAlpha = ENABLED_BUTTON_ALPHA;
             mAutoButton.setImageDrawable(mAutoOffDrawable);
         }
+        mRecycleAirButton.setEnabled(!isOn);
+        mRecycleAirButton.setAlpha(mTopPanelMaxAlpha);
+        mAcButton.setAlpha(mTopPanelMaxAlpha);
+        mAcButton.setEnabled(!isOn);
         View mHvacFanControlBackground = findViewById(R.id.fan_control_bg);
 //        mHvacFanControlBackground.setAlpha(mTopPanelMaxAlpha);
         linearLayout5.setAlpha(mTopPanelMaxAlpha);
@@ -593,27 +598,28 @@ public class MainActivity extends AppCompatActivity {
      * Shows seekbar for volume in a dialog
      */
     PopupWindow popupWindow;
-    public void showVolumeControl(){
 
-        if(popupWindow!=null && popupWindow.isShowing()){
+    public void showVolumeControl() {
+
+        if (popupWindow != null && popupWindow.isShowing()) {
             popupWindow.dismiss();
             return;
         }
         LayoutInflater layoutInflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View dialog = layoutInflater.inflate(R.layout.volume_dialog,null);
+        View dialog = layoutInflater.inflate(R.layout.volume_dialog, null);
 
         popupWindow = new PopupWindow(dialog, 100, 350);
 
         //display the popup window with volume seekbar
-        popupWindow.showAsDropDown(iv_Volume,50,-450 );
+        popupWindow.showAsDropDown(iv_Volume, 50, -450);
 
         SeekBar seekbarVolume = dialog.findViewById(R.id.volume_seekbar);
-        final AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        final AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         seekbarVolume.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         seekbarVolume.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
 
         //Declare handler and runnable to Hide popup after some seconds in onStopTrackingTouch
-        final Handler handler  = new Handler();
+        final Handler handler = new Handler();
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -623,7 +629,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        handler.postDelayed(runnable,5000);
+        handler.postDelayed(runnable, 5000);
 
         seekbarVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -643,7 +649,7 @@ public class MainActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
 
 
-                handler.postDelayed(runnable,3000);
+                handler.postDelayed(runnable, 3000);
 
             }
         });

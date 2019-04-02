@@ -18,8 +18,8 @@ public class TemperatureController {
 //        mHvacController.registerCallback(mCallback);
         mDriverTempBar.setTemperatureChangeListener(mDriverTempClickListener);
         mPassengerTempBar.setTemperatureChangeListener(mPassengerTempClickListener);
-        mDriverTempBar.setTemperature(50);
-        mPassengerTempBar.setTemperature(50);
+        mDriverTempBar.setTemperature(70);
+        mPassengerTempBar.setTemperature(70);
     }
 //    private final HvacController.Callback mCallback = new HvacController.Callback() {
 //        @Override
