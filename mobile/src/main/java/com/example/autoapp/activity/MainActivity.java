@@ -22,9 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionManager;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,7 +34,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
@@ -53,7 +50,6 @@ import com.example.autoapp.adapters.MediaItemViewHolder;
 import com.example.autoapp.adapters.PlaylistSpinnerAdapter;
 import com.example.autoapp.controller.FanDirectionButtonsController;
 import com.example.autoapp.controller.FanSpeedBarController;
-import com.example.autoapp.controller.HvacPanelController;
 import com.example.autoapp.controller.ObjectsController;
 import com.example.autoapp.controller.SeatWarmerController;
 import com.example.autoapp.controller.TemperatureController;
@@ -68,7 +64,6 @@ import com.example.autoapp.helpers.ItemClickSupport;
 import com.example.autoapp.helpers.MusicLibrary;
 import com.example.autoapp.models.Apps;
 import com.example.autoapp.services.MyMusicService;
-
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -90,16 +85,12 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout cl_media_list;
     private ImageView iv_map;
     private TextView tvSongName, tvArtistName;
-    private ImageView iv_PlayPause, iv_Previous, iv_Next;
+    private ImageView iv_PlayPause;
 
     private ToggleButton mRecycleAirButton;
     private ToggleButton mAcButton;
-    private FanSpeedBar mFanSpeedBar;
-    private FanSpeedBarController mFanSpeedBarController;
-    private TemperatureController mTemperatureController;
     ImageView mAutoButton;
 
-    private float mTopPanelMaxAlpha = 1.0f;
     private static final float DISABLED_BUTTON_ALPHA = 0.20f;
     private static final float ENABLED_BUTTON_ALPHA = 1.0f;
 
@@ -114,24 +105,6 @@ public class MainActivity extends AppCompatActivity {
 
     private MediaBrowserCompat mMediaBrowser;
     private ImageView iv_Volume;
-
-    private WindowManager mWindowManager;
-    private View mPanel;
-    private View mContainer;
-    private int mPanelCollapsedHeight;
-    private int mPanelFullExpandedHeight;
-    private int mScreenBottom;
-    private int mScreenWidth;
-    private int mTemperatureSideMargin;
-    private int mTemperatureOverlayWidth;
-    private int mTemperatureOverlayHeight;
-    private int mTemperatureBarCollapsedHeight;
-    private HvacPanelController mHvacPanelController;
-    private ViewGroup mDriverTemperatureBarTouchOverlay;
-    private ViewGroup mPassengerTemperatureBarTouchOverlay;
-    private TemperatureBarOverlay mDriverTemperatureBar;
-    private TemperatureBarOverlay mPassengerTemperatureBar;
-
     private static final String TAG = "HvacUiService";
     private boolean mAutoMode;
     private Drawable mAutoOnDrawable;
@@ -155,12 +128,11 @@ public class MainActivity extends AppCompatActivity {
         setAppsListItems();     //set the apps list in the top section of the screen
         setMediaPlayer();       //initialize the media player functionality
         initializeMap();        //setup the map and its functionality
-        //trialFunctions();
-        setFunctionalities();
+        setFunctionality();   //setup the HVAC elements UI/UX functionality
 
     }
 
-    private void setFunctionalities() {
+    private void setFunctionality() {
         Resources res = getResources();
         mAutoOnDrawable = res.getDrawable(R.drawable.ic_auto_on);
         mAutoOffDrawable = res.getDrawable(R.drawable.ic_auto_off);
@@ -170,8 +142,8 @@ public class MainActivity extends AppCompatActivity {
         mAcButton = findViewById(R.id.ac_button);
         mAcButton.setToggleIcons(res.getDrawable(R.drawable.ic_ac_on),
                 res.getDrawable(R.drawable.ic_ac_off));
-        mFanSpeedBar = findViewById(R.id.fan_speed_bar);
-        mFanSpeedBarController = new FanSpeedBarController(mFanSpeedBar);
+        FanSpeedBar mFanSpeedBar = findViewById(R.id.fan_speed_bar);
+        FanSpeedBarController mFanSpeedBarController = new FanSpeedBarController(mFanSpeedBar);
         FanDirectionButtons mFanDirectionButtons = findViewById(R.id.fan_direction_buttons);
         FanDirectionButtonsController mFanDirectionButtonsController
                 = new FanDirectionButtonsController(mFanDirectionButtons);
@@ -205,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("ClickableViewAccessibility")
     private void setAutoMode(boolean isOn) {
         HvacPanelRow linearLayout5 = findViewById(R.id.linearLayout5);
+        float mTopPanelMaxAlpha;
         if (isOn) {
             linearLayout5.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -225,8 +198,6 @@ public class MainActivity extends AppCompatActivity {
         mRecycleAirButton.setAlpha(mTopPanelMaxAlpha);
         mAcButton.setAlpha(mTopPanelMaxAlpha);
         mAcButton.setEnabled(!isOn);
-        View mHvacFanControlBackground = findViewById(R.id.fan_control_bg);
-//        mHvacFanControlBackground.setAlpha(mTopPanelMaxAlpha);
         linearLayout5.setAlpha(mTopPanelMaxAlpha);
     }
 
@@ -377,143 +348,6 @@ public class MainActivity extends AppCompatActivity {
             updatePlaybackState(MediaControllerCompat.getMediaController(MainActivity.this).getPlaybackState());
 
         }
-    }
-
-    private void trialFunctions() {
-        Resources res = getResources();
-        mPanelCollapsedHeight = res.getDimensionPixelSize(R.dimen.car_hvac_panel_collapsed_height);
-        mPanelFullExpandedHeight
-                = res.getDimensionPixelSize(R.dimen.car_hvac_panel_full_expanded_height);
-        mTemperatureSideMargin = res.getDimensionPixelSize(R.dimen.temperature_side_margin);
-        mTemperatureOverlayWidth = res.getDimensionPixelSize(R.dimen.temperature_bar_width_expanded);
-        mTemperatureOverlayHeight
-                = res.getDimensionPixelSize(R.dimen.car_hvac_panel_full_expanded_height);
-        mTemperatureBarCollapsedHeight
-                = res.getDimensionPixelSize(R.dimen.temperature_bar_collapsed_height);
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        DisplayMetrics metrics = new DisplayMetrics();
-        mWindowManager.getDefaultDisplay().getRealMetrics(metrics);
-        mScreenBottom = metrics.heightPixels - getStatusBarHeight();
-        mScreenWidth = metrics.widthPixels;
-        WindowManager.LayoutParams params = getWindow().getAttributes();/*new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                        | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                        | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                PixelFormat.TRANSLUCENT);*/
-        params.packageName = this.getPackageName();
-        params.gravity = Gravity.TOP | Gravity.START;
-        params.x = 0;
-        params.y = 0;
-        params.width = mScreenWidth;
-        params.height = mScreenBottom;
-        disableAnimations(params);
-        mContainer = inflater.inflate(R.layout.hvac_panel, null);
-        mContainer.setLayoutParams(params);
-        // The top padding should be calculated on the screen height and the height of the
-        // expanded hvac panel. The space defined by the padding is meant to be clickable for
-        // dismissing the hvac panel.
-        int topPadding = mScreenBottom - mPanelFullExpandedHeight;
-        mContainer.setPadding(0, topPadding, 0, 0);
-        mContainer.setFocusable(false);
-        mContainer.setClickable(false);
-        mContainer.setFocusableInTouchMode(false);
-        mPanel = mContainer.findViewById(R.id.hvac_center_panel);
-        mPanel.getLayoutParams().height = mPanelCollapsedHeight;
-//        mWindowManager.addView(mContainer, params);
-        createTemperatureBars(inflater);
-        mHvacPanelController = new HvacPanelController(this /* context */, findViewById(R.id.fl_main),
-                mDriverTemperatureBar, mPassengerTemperatureBar,
-                mDriverTemperatureBarTouchOverlay, mPassengerTemperatureBarTouchOverlay);
-//        Intent bindIntent = new Intent(this /* context */, HvacController.class);
-//        if (!bindService(bindIntent, mServiceConnection, Context.BIND_AUTO_CREATE)) {
-//            Log.e("TAG", "Failed to connect to HvacController.");
-//        }
-    }
-
-    private WindowManager.LayoutParams createClickableOverlayLayoutParam() {
-        return getWindow().getAttributes();/*new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                        | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                PixelFormat.TRANSLUCENT);*/
-    }
-
-    private TemperatureBarOverlay createTemperatureBarOverlay(LayoutInflater inflater,
-                                                              int gravity) {
-        TemperatureBarOverlay button = (TemperatureBarOverlay) inflater
-                .inflate(R.layout.hvac_temperature_bar_overlay, null);
-        WindowManager.LayoutParams params = createClickableOverlayLayoutParam();
-        params.gravity = gravity;
-        params.x = mTemperatureSideMargin;
-        params.y = mScreenBottom - mTemperatureOverlayHeight;
-        params.width = mTemperatureOverlayWidth;
-        params.height = mTemperatureOverlayHeight;
-        disableAnimations(params);
-        button.setLayoutParams(params);
-        mWindowManager.addView(button, params);
-        return button;
-    }
-
-    /**
-     * Creates a touchable overlay in the dimensions of a collapsed {@link TemperatureBarOverlay}.
-     *
-     * @return a {@link ViewGroup} that was added to the {@link WindowManager}
-     */
-    private ViewGroup addTemperatureTouchOverlay(int gravity) {
-        WindowManager.LayoutParams params = createClickableOverlayLayoutParam();
-        params.gravity = gravity;
-        params.x = mTemperatureSideMargin;
-        params.y = mScreenBottom - mTemperatureBarCollapsedHeight;
-        params.width = mTemperatureOverlayWidth;
-        params.height = mTemperatureBarCollapsedHeight;
-        ViewGroup overlay = new LinearLayout(this /* context */);
-        overlay.setLayoutParams(params);
-        mWindowManager.addView(overlay, params);
-        return overlay;
-    }
-
-    private void createTemperatureBars(LayoutInflater inflater) {
-        mDriverTemperatureBar
-                = createTemperatureBarOverlay(inflater, Gravity.TOP | Gravity.START);
-        mPassengerTemperatureBar
-                = createTemperatureBarOverlay(inflater, Gravity.TOP | Gravity.END);
-        // Create a transparent overlay that is the size of the collapsed temperature bar.
-        // It will receive touch events and trigger the expand/collapse of the panel. This is
-        // necessary since changing the height of the temperature bar overlay dynamically, causes
-        // a jank when WindowManager updates the view with a new height. This hack allows us
-        // to maintain the temperature bar overlay at constant (expanded) height and just
-        // update whether or not it is touchable/clickable.
-        mDriverTemperatureBarTouchOverlay
-                = addTemperatureTouchOverlay(Gravity.TOP | Gravity.START);
-        mPassengerTemperatureBarTouchOverlay
-                = addTemperatureTouchOverlay(Gravity.TOP | Gravity.END);
-    }
-
-    /**
-     * Disables animations when window manager updates a child view.
-     */
-    private void disableAnimations(WindowManager.LayoutParams params) {
-        try {
-            int currentFlags = (Integer) params.getClass().getField("privateFlags").get(params);
-            params.getClass().getField("privateFlags").set(params, currentFlags | 0x00000040);
-        } catch (Exception e) {
-            Log.e(TAG, "Error disabling animation");
-        }
-    }
-
-    private int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -695,7 +529,7 @@ public class MainActivity extends AppCompatActivity {
     private void setSourceOptions() {
 
         final List<String> items = Arrays.asList("Bluetooth","Radio","AUX","Storage");
-        final WheelView wheelView = (WheelView) findViewById(R.id.loop_view);
+        final WheelView wheelView = findViewById(R.id.loop_view);
         wheelView.setOnLoopScrollListener(new WheelView.
                 OnLoopScrollListener() {
 
@@ -884,8 +718,8 @@ public class MainActivity extends AppCompatActivity {
         iv_PlayPause.setEnabled(true);
         iv_Volume = findViewById(R.id.iv_volume);
         iv_Favourite = findViewById(R.id.iv_favourite);
-        iv_Next = findViewById(R.id.iv_next);
-        iv_Previous = findViewById(R.id.iv_prev);
+        ImageView iv_Next = findViewById(R.id.iv_next);
+        ImageView iv_Previous = findViewById(R.id.iv_prev);
         iv_PlayPause.setOnClickListener(mPlaybackButtonListener);
         iv_Next.setOnClickListener(mPlaybackButtonListener);
         iv_Previous.setOnClickListener(mPlaybackButtonListener);

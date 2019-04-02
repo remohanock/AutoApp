@@ -174,7 +174,7 @@
                     <ImageView
                         android:id="@+id/iv_map"
                         android:layout_width="match_parent"
-                        android:layout_height="300dp"
+                        android:layout_height="400dp"
                         android:adjustViewBounds="true"
                         android:contentDescription="@string/map"
                         android:scaleType="centerCrop"
@@ -188,7 +188,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="150dp"
                         android:layout_gravity="bottom"
-                        android:visibility="visible"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent">
@@ -216,46 +216,46 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
-                        android:id="@+id/source_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/source"
-                        android:textColor="@android:color/white"
+                            android:id="@+id/source_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/source"
+                            android:textColor="@android:color/white"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="@+id/loop_view"
-                        app:layout_constraintStart_toStartOf="@+id/loop_view"
-                        app:layout_constraintTop_toTopOf="parent" />
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="@+id/loop_view"
+                            app:layout_constraintStart_toStartOf="@+id/loop_view"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageView
-                        android:id="@+id/imageView7"
+                        <ImageView
+                            android:id="@+id/imageView7"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_play_arrow_black_36dp"
-                        app:layout_constraintBottom_toBottomOf="@+id/loop_view"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/loop_view" />
+                            android:src="@drawable/ic_play_arrow_black_36dp"
+                            app:layout_constraintBottom_toBottomOf="@+id/loop_view"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/loop_view" />
 
-                    <com.example.autoapp.WheelView.WheelView
-                        android:id="@+id/loop_view"
-                        android:layout_width="150dp"
-                        android:layout_height="0dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/imageView7"
-                        app:layout_constraintTop_toBottomOf="@+id/source_txt"
-                        app:layout_constraintVertical_bias="0.0"
-                        app:wheelViewContentTextColor="#ffffff"
-                        app:wheelViewDrawItemCount="7"
-                        app:wheelViewInitialPosition="1"
-                        app:wheelViewIsLoopEnabled="false"
-                        app:wheelViewLineColor="#ffffff"
-                        app:wheelViewOverflowTextColor="#ffafafaf"
-                        app:wheelViewTextSize="18sp" />
+                        <com.example.autoapp.WheelView.WheelView
+                            android:id="@+id/loop_view"
+                            android:layout_width="150dp"
+                            android:layout_height="0dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/imageView7"
+                            app:layout_constraintTop_toBottomOf="@+id/source_txt"
+                            app:layout_constraintVertical_bias="0.0"
+                            app:wheelViewContentTextColor="#ffffff"
+                            app:wheelViewDrawItemCount="7"
+                            app:wheelViewInitialPosition="1"
+                            app:wheelViewIsLoopEnabled="false"
+                            app:wheelViewLineColor="#ffffff"
+                            app:wheelViewOverflowTextColor="#ffafafaf"
+                            app:wheelViewTextSize="18sp" />
 
                     <Spinner
                         android:id="@+id/playlist_spinner"
@@ -415,13 +415,10 @@
                     android:layout_height="1dp"
                     android:background="@android:color/darker_gray" />
 
-                <include layout="@layout/hvac_layout"/>
+                <include layout="@layout/hvac_layout" />
 
                 <!--<include layout="@layout/hvac_panel" />-->
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
-
-
-
 </android.support.constraint.ConstraintLayout>

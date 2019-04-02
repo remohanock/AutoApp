@@ -18,7 +18,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private RecyclerView rv_drivers;
 
-    ObjectsController objectsController;
+    private ObjectsController objectsController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
