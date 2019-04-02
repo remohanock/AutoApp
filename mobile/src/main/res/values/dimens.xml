@@ -58,4 +58,10 @@
     <dimen name="hvac_floating_text_left_margin">8dp</dimen>
     <dimen name="hvac_text_left_margin">26dp</dimen>
     <dimen name="hvac_close_button_bottom_margin">0dp</dimen>
+
+
+    <!-- media browser listview -->
+    <dimen name="media_item_height">72dp</dimen>
+    <dimen name="media_item_icon_margin_start">12dp</dimen>
+    <dimen name="media_item_text_margin_start">60dp</dimen>
 </resources>

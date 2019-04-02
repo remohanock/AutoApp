@@ -1,6 +1,7 @@
 package com.example.autoapp.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.res.Resources;
@@ -31,12 +32,16 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +49,8 @@ import com.bumptech.glide.Glide;
 import com.example.autoapp.R;
 import com.example.autoapp.WheelView.WheelView;
 import com.example.autoapp.adapters.AppsAdapter;
+import com.example.autoapp.adapters.MediaItemViewHolder;
+import com.example.autoapp.adapters.PlaylistSpinnerAdapter;
 import com.example.autoapp.controller.FanDirectionButtonsController;
 import com.example.autoapp.controller.FanSpeedBarController;
 import com.example.autoapp.controller.HvacPanelController;
@@ -64,6 +71,7 @@ import com.example.autoapp.services.MyMusicService;
 
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -129,7 +137,9 @@ public class MainActivity extends AppCompatActivity {
     private Drawable mAutoOnDrawable;
     private Drawable mAutoOffDrawable;
     private ImageView iv_Favourite;
-    WheelView source_wheel;
+    private ListView lv_playlist;
+    private Spinner sp_playlist_titles;
+    private BrowseAdapter mBrowserAdapter;
 
 
     @Override
@@ -292,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
                         metadata == null
                                 ? R.drawable.ic_favorite_border_white_24dp
                                 : MusicLibrary.getFavouriteBitmap(metadata.getDescription().getMediaId())));
+        mBrowserAdapter.notifyDataSetChanged();
 
     }
 
@@ -329,12 +340,14 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onPlaybackStateChanged(PlaybackStateCompat state) {
                     updatePlaybackState(state);
+                    mBrowserAdapter.notifyDataSetChanged();
 
                 }
 
                 @Override
                 public void onSessionDestroyed() {
                     updatePlaybackState(null);
+                    mBrowserAdapter.notifyDataSetChanged();
 
                 }
             };
@@ -568,6 +581,114 @@ public class MainActivity extends AppCompatActivity {
 
         initializeMediabrowser();
         setSourceOptions();
+        setPlayLists();
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setPlayLists() {
+        lv_playlist.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        MediaBrowserCompat.MediaItem item = mBrowserAdapter.getItem(position);
+                        onMediaItemSelected(item);
+                    }
+                });
+
+        lv_playlist.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        scroll_main.requestDisallowInterceptTouchEvent(true);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        scroll_main.requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
+                return false;
+            }
+        });
+        List<String> playlists = Arrays.asList("Favourites");
+        PlaylistSpinnerAdapter spinnerAdapter = new PlaylistSpinnerAdapter(playlists);
+        sp_playlist_titles.setAdapter(spinnerAdapter);
+
+
+        sp_playlist_titles.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                String title = sp_playlist_titles.getItemAtPosition(position).toString();
+                Log.e(TAG, "onItemSelected: "+ title );
+                switch (title){
+                    case "Favourites":
+                        loadFavourites();
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        sp_playlist_titles.setSelection(0); //default selection
+
+    }
+
+    /**
+     * Load media in favourite playlist to the listview
+     */
+    private void loadFavourites() {
+
+        mBrowserAdapter.clear();
+        mBrowserAdapter.addAll(MusicLibrary.getFavouriteMediaItems());
+        mBrowserAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * Play the selected media item
+     * @param item
+     */
+    private void onMediaItemSelected(MediaBrowserCompat.MediaItem item) {
+        if (item.isPlayable()) {
+            MediaControllerCompat.getMediaController(this)
+                    .getTransportControls()
+                    .playFromMediaId(item.getMediaId(), null);
+        }
+    }
+
+    // Displays list of browsed MediaItems.
+    private class BrowseAdapter extends ArrayAdapter<MediaBrowserCompat.MediaItem> {
+
+        public BrowseAdapter(Activity context) {
+            super(context, R.layout.media_list_item, new ArrayList<MediaBrowserCompat.MediaItem>());
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            MediaBrowserCompat.MediaItem item = getItem(position);
+            int itemState = MediaItemViewHolder.STATE_NONE;
+            if (item.isPlayable()) {
+                String itemMediaId = item.getDescription().getMediaId();
+                int playbackState = PlaybackStateCompat.STATE_NONE;
+                if (mCurrentState != null) {
+                    playbackState = mCurrentState.getState();
+                }
+                if (mCurrentMetadata != null
+                        && itemMediaId.equals(mCurrentMetadata.getDescription().getMediaId())) {
+                    if (playbackState == PlaybackState.STATE_PLAYING
+                            || playbackState == PlaybackState.STATE_BUFFERING) {
+                        itemState = MediaItemViewHolder.STATE_PLAYING;
+                    } else if (playbackState != PlaybackState.STATE_ERROR) {
+                        itemState = MediaItemViewHolder.STATE_PAUSED;
+                    }
+                }
+            }
+            return MediaItemViewHolder.setupView(
+                    (Activity) getContext(), convertView, parent, item.getDescription(), itemState);
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -608,6 +729,11 @@ public class MainActivity extends AppCompatActivity {
 
         iv_Favourite.setImageDrawable(
                 ContextCompat.getDrawable(this,MusicLibrary.toggleFavourite(mediaId)));
+        Log.e(TAG, "toggleFavourite: "+sp_playlist_titles.getSelectedItem().toString() );
+        if(sp_playlist_titles.getSelectedItem().toString().equals("Favourites")) {
+
+           loadFavourites();
+        }
     }
     /**
      * Shows seekbar for volume in a dialog
@@ -763,7 +889,12 @@ public class MainActivity extends AppCompatActivity {
         iv_PlayPause.setOnClickListener(mPlaybackButtonListener);
         iv_Next.setOnClickListener(mPlaybackButtonListener);
         iv_Previous.setOnClickListener(mPlaybackButtonListener);
-        source_wheel = findViewById(R.id.loop_view);
+        mBrowserAdapter = new BrowseAdapter(this);
+        sp_playlist_titles = findViewById(R.id.playlist_spinner);
+        lv_playlist = findViewById(R.id.lv_playlist);
+
+        lv_playlist.setAdapter(mBrowserAdapter);
+
 
         tvSongName = findViewById(R.id.tv_songname);
         tvArtistName = findViewById(R.id.tv_artistname);

@@ -118,6 +118,19 @@ public class MusicLibrary {
         }
     }
 
+    public static List<MediaBrowserCompat.MediaItem> getFavouriteMediaItems(){
+        List<MediaBrowserCompat.MediaItem> result = new ArrayList<>();
+        for (String mediaID : favourites.keySet()){
+            if(favourites.get(mediaID) == 1 && music.containsKey(mediaID)){
+                result.add(
+                        new MediaBrowserCompat.MediaItem(
+                                music.get(mediaID).getDescription(), MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
+            }
+        }
+
+        return result;
+    }
+
     public static List<MediaBrowserCompat.MediaItem> getMediaItems() {
         List<MediaBrowserCompat.MediaItem> result = new ArrayList<>();
         for (MediaMetadataCompat metadata : music.values()) {
