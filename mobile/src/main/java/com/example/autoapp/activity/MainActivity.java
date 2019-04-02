@@ -44,6 +44,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.autoapp.R;
+import com.example.autoapp.WheelView.WheelView;
 import com.example.autoapp.adapters.AppsAdapter;
 import com.example.autoapp.controller.FanDirectionButtonsController;
 import com.example.autoapp.controller.FanSpeedBarController;
@@ -63,7 +64,9 @@ import com.example.autoapp.helpers.MusicLibrary;
 import com.example.autoapp.models.Apps;
 import com.example.autoapp.services.MyMusicService;
 
+
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -128,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
     private Drawable mAutoOnDrawable;
     private Drawable mAutoOffDrawable;
     private ImageView iv_Favourite;
+    WheelView source_wheel;
 
 
     @Override
@@ -145,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
         initializeMap();        //setup the map and its functionality
         //trialFunctions();
         setFunctionalities();
+
     }
 
     private void setFunctionalities() {
@@ -214,6 +219,10 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
+
+    }
+
+    public void initializeMediabrowser(){
         mMediaBrowser =
                 new MediaBrowserCompat(
                         this,
@@ -227,6 +236,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disconnectMediaBrowser();
+    }
+
+    public void disconnectMediaBrowser(){
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
         if (controller != null) {
             controller.unregisterCallback(mMediaControllerCallback);
@@ -541,6 +560,24 @@ public class MainActivity extends AppCompatActivity {
                 toggleFavourite(mCurrentMetadata.getDescription().getMediaId());
             }
         });
+
+        initializeMediabrowser();
+        setSourceOptions();
+    }
+
+    private void setSourceOptions() {
+
+        final List<String> items = Arrays.asList("Bluetooth","Radio","AUX","Storage");
+        final WheelView wheelView = (WheelView) findViewById(R.id.loop_view);
+        wheelView.setOnLoopScrollListener(new WheelView.
+                OnLoopScrollListener() {
+
+            @Override
+            public void onLoopScrollFinish(@NonNull Object item, int position) {
+
+            }
+        });
+        wheelView.setItems(items);
     }
 
     /**
@@ -705,6 +742,7 @@ public class MainActivity extends AppCompatActivity {
         iv_PlayPause.setOnClickListener(mPlaybackButtonListener);
         iv_Next.setOnClickListener(mPlaybackButtonListener);
         iv_Previous.setOnClickListener(mPlaybackButtonListener);
+        source_wheel = findViewById(R.id.loop_view);
 
         tvSongName = findViewById(R.id.tv_songname);
         tvArtistName = findViewById(R.id.tv_artistname);
