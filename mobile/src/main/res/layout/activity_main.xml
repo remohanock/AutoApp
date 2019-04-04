@@ -238,7 +238,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="@+id/loop_view" />
 
-                        <com.example.autoapp.WheelView.WheelView
+                        <com.example.autoapp.wheelview.WheelView
                             android:id="@+id/loop_view"
                             android:layout_width="150dp"
                             android:layout_height="0dp"

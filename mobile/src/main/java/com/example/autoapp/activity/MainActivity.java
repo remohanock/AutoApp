@@ -44,7 +44,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.autoapp.R;
-import com.example.autoapp.WheelView.WheelView;
+import com.example.autoapp.wheelview.WheelView;
 import com.example.autoapp.adapters.AppsAdapter;
 import com.example.autoapp.adapters.MediaItemViewHolder;
 import com.example.autoapp.adapters.PlaylistSpinnerAdapter;
@@ -86,14 +86,16 @@ public class MainActivity extends AppCompatActivity {
     private ImageView iv_map;
     private TextView tvSongName, tvArtistName;
     private ImageView iv_PlayPause;
-
     private ToggleButton mRecycleAirButton;
     private ToggleButton mAcButton;
-    ImageView mAutoButton;
+    private ImageView mAutoButton;
+    private ImageView iv_Volume;
+    private ImageView iv_Favourite;
+    private ListView lv_playlist;
+    private Spinner sp_playlist_titles;
 
     private static final float DISABLED_BUTTON_ALPHA = 0.20f;
     private static final float ENABLED_BUTTON_ALPHA = 1.0f;
-
 
     String driverImage = "";
     private ObjectsController objectsController;
@@ -102,16 +104,12 @@ public class MainActivity extends AppCompatActivity {
     private Animation animShow, animHide;
     private MediaMetadataCompat mCurrentMetadata;
     private PlaybackStateCompat mCurrentState;
-
     private MediaBrowserCompat mMediaBrowser;
-    private ImageView iv_Volume;
     private static final String TAG = "HvacUiService";
     private boolean mAutoMode;
     private Drawable mAutoOnDrawable;
     private Drawable mAutoOffDrawable;
-    private ImageView iv_Favourite;
-    private ListView lv_playlist;
-    private Spinner sp_playlist_titles;
+
     private BrowseAdapter mBrowserAdapter;
 
 
@@ -129,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
         setMediaPlayer();       //initialize the media player functionality
         initializeMap();        //setup the map and its functionality
         setFunctionality();   //setup the HVAC elements UI/UX functionality
-
     }
 
     private void setFunctionality() {
@@ -162,14 +159,13 @@ public class MainActivity extends AppCompatActivity {
         mAutoButton.setOnClickListener(mAutoButtonClickListener);
         TemperatureBarOverlay linearLayout3 = findViewById(R.id.linearLayout3);
         TemperatureBarOverlay linearLayout4 = findViewById(R.id.linearLayout4);
-        TemperatureController temperatureController = new TemperatureController(linearLayout3,linearLayout4);
+        TemperatureController temperatureController = new TemperatureController(linearLayout3, linearLayout4);
     }
 
     private View.OnClickListener mAutoButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             mAutoMode = !mAutoMode;
-//            mHvacController.setAutoMode(mAutoMode);
             setAutoMode(mAutoMode);
         }
     };
@@ -208,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void initializeMediabrowser(){
+    public void initializeMediabrowser() {
         mMediaBrowser =
                 new MediaBrowserCompat(
                         this,
@@ -231,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
         disconnectMediaBrowser();
     }
 
-    public void disconnectMediaBrowser(){
+    public void disconnectMediaBrowser() {
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
         if (controller != null) {
             controller.unregisterCallback(mMediaControllerCallback);
@@ -454,8 +450,8 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                 String title = sp_playlist_titles.getItemAtPosition(position).toString();
-                Log.e(TAG, "onItemSelected: "+ title );
-                switch (title){
+                Log.e(TAG, "onItemSelected: " + title);
+                switch (title) {
                     case "Favourites":
                         loadFavourites();
                         break;
@@ -483,6 +479,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Play the selected media item
+     *
      * @param item
      */
     private void onMediaItemSelected(MediaBrowserCompat.MediaItem item) {
@@ -528,7 +525,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("ClickableViewAccessibility")
     private void setSourceOptions() {
 
-        final List<String> items = Arrays.asList("Bluetooth","Radio","AUX","Storage");
+        final List<String> items = Arrays.asList("Bluetooth", "Radio", "AUX", "Storage");
         final WheelView wheelView = findViewById(R.id.loop_view);
         wheelView.setOnLoopScrollListener(new WheelView.
                 OnLoopScrollListener() {
@@ -557,18 +554,20 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Toggles favourite on or off.
+     *
      * @param mediaId
      */
-    public void toggleFavourite(String mediaId){
+    public void toggleFavourite(String mediaId) {
 
         iv_Favourite.setImageDrawable(
-                ContextCompat.getDrawable(this,MusicLibrary.toggleFavourite(mediaId)));
-        Log.e(TAG, "toggleFavourite: "+sp_playlist_titles.getSelectedItem().toString() );
-        if(sp_playlist_titles.getSelectedItem().toString().equals("Favourites")) {
+                ContextCompat.getDrawable(this, MusicLibrary.toggleFavourite(mediaId)));
+        Log.e(TAG, "toggleFavourite: " + sp_playlist_titles.getSelectedItem().toString());
+        if (sp_playlist_titles.getSelectedItem().toString().equals("Favourites")) {
 
-           loadFavourites();
+            loadFavourites();
         }
     }
+
     /**
      * Shows seekbar for volume in a dialog
      */

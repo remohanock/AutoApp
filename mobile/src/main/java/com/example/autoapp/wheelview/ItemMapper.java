@@ -1,4 +1,4 @@
-package com.example.autoapp.WheelView;
+package com.example.autoapp.wheelview;
 
 import android.support.annotation.NonNull;
 
