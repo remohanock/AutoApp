@@ -44,6 +44,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.autoapp.R;
+import com.example.autoapp.adapters.AllSongsAdapter;
 import com.example.autoapp.wheelview.WheelView;
 import com.example.autoapp.adapters.AppsAdapter;
 import com.example.autoapp.adapters.MediaItemViewHolder;
@@ -111,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
     private Drawable mAutoOffDrawable;
 
     private BrowseAdapter mBrowserAdapter;
+    private RecyclerView rv_allsongs;
+    private AllSongsAdapter songsAdapter;
 
 
     @Override
@@ -270,6 +273,7 @@ public class MainActivity extends AppCompatActivity {
                                 ? R.drawable.ic_favorite_border_white_24dp
                                 : MusicLibrary.getFavouriteBitmap(metadata.getDescription().getMediaId())));
         mBrowserAdapter.notifyDataSetChanged();
+        songsAdapter.updatePlayback(mCurrentState,mCurrentMetadata);
 
     }
 
@@ -308,6 +312,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onPlaybackStateChanged(PlaybackStateCompat state) {
                     updatePlaybackState(state);
                     mBrowserAdapter.notifyDataSetChanged();
+                    songsAdapter.updatePlayback(mCurrentState,mCurrentMetadata);
 
                 }
 
@@ -315,6 +320,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onSessionDestroyed() {
                     updatePlaybackState(null);
                     mBrowserAdapter.notifyDataSetChanged();
+                    songsAdapter.updatePlayback(mCurrentState,mCurrentMetadata);
 
                 }
             };
@@ -412,6 +418,19 @@ public class MainActivity extends AppCompatActivity {
         initializeMediabrowser();
         setSourceOptions();
         setPlayLists();
+        setSongsList();
+    }
+
+    private void setSongsList() {
+
+        rv_allsongs.setAdapter(songsAdapter);
+        ItemClickSupport.addTo(rv_allsongs).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+               onMediaItemSelected(MusicLibrary.getMediaItems().get(position));
+                songsAdapter.updatePlayback(mCurrentState,mCurrentMetadata);
+            }
+        });
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -603,6 +622,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+
+
         handler.postDelayed(runnable, 5000);
 
         seekbarVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -725,9 +746,11 @@ public class MainActivity extends AppCompatActivity {
         mBrowserAdapter = new BrowseAdapter(this);
         sp_playlist_titles = findViewById(R.id.playlist_spinner);
         lv_playlist = findViewById(R.id.lv_playlist);
+        rv_allsongs  = findViewById(R.id.rv_allsongs);
 
         lv_playlist.setAdapter(mBrowserAdapter);
 
+        songsAdapter = new AllSongsAdapter(MusicLibrary.getMediaItems(),mCurrentState,mCurrentMetadata,MainActivity.this);
 
         tvSongName = findViewById(R.id.tv_songname);
         tvArtistName = findViewById(R.id.tv_artistname);
@@ -739,7 +762,7 @@ public class MainActivity extends AppCompatActivity {
                 .error(getDrawable(R.drawable.driver))
                 .into(iv_profile);
         rv_apps.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-
+        rv_allsongs.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     }
 
     /***
