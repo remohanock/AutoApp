@@ -62,6 +62,7 @@ import com.example.autoapp.customclass.HvacPanelRow;
 import com.example.autoapp.customclass.SeatWarmerButton;
 import com.example.autoapp.customclass.TemperatureBarOverlay;
 import com.example.autoapp.customclass.ToggleButton;
+import com.example.autoapp.fragment.CalenderFragment;
 import com.example.autoapp.fragment.ContactsFragment;
 import com.example.autoapp.helpers.CircleTransform;
 import com.example.autoapp.helpers.ItemClickSupport;
@@ -277,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
                                 ? R.drawable.ic_favorite_border_white_24dp
                                 : MusicLibrary.getFavouriteBitmap(metadata.getDescription().getMediaId())));
         mBrowserAdapter.notifyDataSetChanged();
-        songsAdapter.updatePlayback(mCurrentState,mCurrentMetadata);
+        songsAdapter.updatePlayback(mCurrentState, mCurrentMetadata);
 
     }
 
@@ -316,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onPlaybackStateChanged(PlaybackStateCompat state) {
                     updatePlaybackState(state);
                     mBrowserAdapter.notifyDataSetChanged();
-                    songsAdapter.updatePlayback(mCurrentState,mCurrentMetadata);
+                    songsAdapter.updatePlayback(mCurrentState, mCurrentMetadata);
 
                 }
 
@@ -324,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onSessionDestroyed() {
                     updatePlaybackState(null);
                     mBrowserAdapter.notifyDataSetChanged();
-                    songsAdapter.updatePlayback(mCurrentState,mCurrentMetadata);
+                    songsAdapter.updatePlayback(mCurrentState, mCurrentMetadata);
 
                 }
             };
@@ -431,8 +432,8 @@ public class MainActivity extends AppCompatActivity {
         ItemClickSupport.addTo(rv_allsongs).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-               onMediaItemSelected(MusicLibrary.getMediaItems().get(position));
-                songsAdapter.updatePlayback(mCurrentState,mCurrentMetadata);
+                onMediaItemSelected(MusicLibrary.getMediaItems().get(position));
+                songsAdapter.updatePlayback(mCurrentState, mCurrentMetadata);
             }
         });
     }
@@ -716,7 +717,7 @@ public class MainActivity extends AppCompatActivity {
                     if (selectedPosition == position) {  //for checking if same item is opened or not
                         fl_app_detail.setVisibility(View.GONE);
                         appsBarExpanded = false;
-                    }else{
+                    } else {
                         doSelectedAppFunctionality(position);
 
                     }
@@ -733,14 +734,17 @@ public class MainActivity extends AppCompatActivity {
         switch (position) {
             case 0:
                 fragment = ContactsFragment.newInstance(MainActivity.this);
-                transaction.replace(R.id.fl_app_fragment, fragment);
+                tv_in_progress.setVisibility(View.GONE);
+                break;
+            case 1:
+                fragment = CalenderFragment.newInstance();
                 tv_in_progress.setVisibility(View.GONE);
                 break;
             default:
-                transaction.replace(R.id.fl_app_fragment,fragment);
                 tv_in_progress.setVisibility(View.VISIBLE);
                 break;
         }
+        transaction.replace(R.id.fl_app_fragment, fragment);
         transaction.commit();
 
     }
@@ -771,11 +775,11 @@ public class MainActivity extends AppCompatActivity {
         mBrowserAdapter = new BrowseAdapter(this);
         sp_playlist_titles = findViewById(R.id.playlist_spinner);
         lv_playlist = findViewById(R.id.lv_playlist);
-        rv_allsongs  = findViewById(R.id.rv_allsongs);
+        rv_allsongs = findViewById(R.id.rv_allsongs);
 
         lv_playlist.setAdapter(mBrowserAdapter);
 
-        songsAdapter = new AllSongsAdapter(MusicLibrary.getMediaItems(),mCurrentState,mCurrentMetadata,MainActivity.this);
+        songsAdapter = new AllSongsAdapter(MusicLibrary.getMediaItems(), mCurrentState, mCurrentMetadata, MainActivity.this);
 
         tvSongName = findViewById(R.id.tv_songname);
         tvArtistName = findViewById(R.id.tv_artistname);

@@ -35,7 +35,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
         viewHolder.contactName.setText(contacts.get(i).getContactName());
         viewHolder.contactNumber.setText(contacts.get(i).getContactNumber());
-        viewHolder.tv_contact_image.setText(contacts.get(i).getContactName().charAt(0)+"");
+        viewHolder.tv_contact_image.setText(contacts.get(i).getContactName().toUpperCase().charAt(0)+"");
         viewHolder.tv_contact_image.setBackgroundColor(getRandomColor());
     }
 

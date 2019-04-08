@@ -92,7 +92,7 @@
             <FrameLayout
                 android:id="@+id/fl_app_fragment"
                 android:layout_width="match_parent"
-                android:layout_height="160dp">
+                android:layout_height="wrap_content">
 
             </FrameLayout>
 
