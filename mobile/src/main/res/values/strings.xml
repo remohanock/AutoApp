@@ -37,4 +37,6 @@
     <string name="temperature_increase_button">temperature increase button</string>
     <string name="temperature_decrease_button">temperature decrease button</string>
     <string name="play_item">Play item</string>
+    <string name="contacts">Contacts: </string>
+    <string name="no_contacts">No contacts are saved yet!</string>
 </resources>

@@ -13,6 +13,9 @@ import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -45,7 +48,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.autoapp.R;
 import com.example.autoapp.adapters.AllSongsAdapter;
-import com.example.autoapp.wheelview.WheelView;
 import com.example.autoapp.adapters.AppsAdapter;
 import com.example.autoapp.adapters.MediaItemViewHolder;
 import com.example.autoapp.adapters.PlaylistSpinnerAdapter;
@@ -60,11 +62,13 @@ import com.example.autoapp.customclass.HvacPanelRow;
 import com.example.autoapp.customclass.SeatWarmerButton;
 import com.example.autoapp.customclass.TemperatureBarOverlay;
 import com.example.autoapp.customclass.ToggleButton;
+import com.example.autoapp.fragment.ContactsFragment;
 import com.example.autoapp.helpers.CircleTransform;
 import com.example.autoapp.helpers.ItemClickSupport;
 import com.example.autoapp.helpers.MusicLibrary;
 import com.example.autoapp.models.Apps;
 import com.example.autoapp.services.MyMusicService;
+import com.example.autoapp.wheelview.WheelView;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -622,8 +626,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-
-
         handler.postDelayed(runnable, 5000);
 
         seekbarVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -709,15 +711,38 @@ public class MainActivity extends AppCompatActivity {
                 if (fl_app_detail.getVisibility() == View.GONE) {
                     fl_app_detail.setVisibility(View.VISIBLE);
                     appsBarExpanded = true;
+                    doSelectedAppFunctionality(position);
                 } else {
                     if (selectedPosition == position) {  //for checking if same item is opened or not
                         fl_app_detail.setVisibility(View.GONE);
                         appsBarExpanded = false;
+                    }else{
+                        doSelectedAppFunctionality(position);
+
                     }
                 }
                 selectedPosition = position;
             }
         });
+    }
+
+    private void doSelectedAppFunctionality(int position) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        Fragment fragment = new Fragment();
+        switch (position) {
+            case 0:
+                fragment = ContactsFragment.newInstance(MainActivity.this);
+                transaction.replace(R.id.fl_app_fragment, fragment);
+                tv_in_progress.setVisibility(View.GONE);
+                break;
+            default:
+                transaction.replace(R.id.fl_app_fragment,fragment);
+                tv_in_progress.setVisibility(View.VISIBLE);
+                break;
+        }
+        transaction.commit();
+
     }
 
 

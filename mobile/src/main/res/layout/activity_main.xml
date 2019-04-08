@@ -43,10 +43,10 @@
             android:layout_height="80dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            tools:listitem="@layout/apps_adapter"
             app:layout_constraintEnd_toStartOf="@+id/imageButton"
             app:layout_constraintStart_toEndOf="@+id/iv_profile"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@layout/apps_adapter" />
 
         <ImageButton
             android:id="@+id/imageButton"
@@ -88,6 +88,13 @@
                 android:text="@string/work_in_progress"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
+
+            <FrameLayout
+                android:id="@+id/fl_app_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="160dp">
+
+            </FrameLayout>
 
         </FrameLayout>
 
@@ -211,14 +218,14 @@
                             android:id="@+id/rv_allsongs"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
+                            android:layout_margin="5dp"
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
-                            android:layout_margin="5dp"
-                            tools:listitem="@layout/allsongs_list_item_row"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/lv_playlist"
                             app:layout_constraintStart_toEndOf="@+id/loop_view"
-                            app:layout_constraintTop_toBottomOf="@+id/mp_notch_close" />
+                            app:layout_constraintTop_toBottomOf="@+id/mp_notch_close"
+                            tools:listitem="@layout/allsongs_list_item_row" />
 
                         <View
                             android:id="@+id/mp_notch_close"
@@ -238,7 +245,7 @@
                             android:layout_marginTop="8dp"
                             android:text="@string/source"
                             android:textColor="@android:color/white"
-                        android:textSize="16sp"
+                            android:textSize="16sp"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toEndOf="@+id/loop_view"
                             app:layout_constraintStart_toStartOf="@+id/loop_view"
@@ -246,8 +253,8 @@
 
                         <ImageView
                             android:id="@+id/imageView7"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:src="@drawable/ic_play_arrow_black_36dp"
                             app:layout_constraintBottom_toBottomOf="@+id/loop_view"
                             app:layout_constraintStart_toStartOf="parent"
@@ -272,28 +279,27 @@
                             app:wheelViewOverflowTextColor="#ffafafaf"
                             app:wheelViewTextSize="18sp" />
 
-                    <Spinner
-                        android:id="@+id/playlist_spinner"
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toStartOf="@id/lv_playlist"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginTop="8dp"
-                        android:popupBackground="@color/navy"
-                        android:background="@color/transparent_black">
-                    </Spinner>
+                        <Spinner
+                            android:id="@+id/playlist_spinner"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="16dp"
+                            android:background="@color/transparent_black"
+                            android:popupBackground="@color/navy"
+                            app:layout_constraintEnd_toStartOf="@id/lv_playlist"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                    <ListView
-                        android:id="@+id/lv_playlist"
-                        android:layout_width="300dp"
-                        android:layout_height="0dp"
-                        android:layout_margin="8dp"
-                        tools:listitem="@layout/media_list_item"
-                        android:background="@color/transparent_black"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"/>
+                        <ListView
+                            android:id="@+id/lv_playlist"
+                            android:layout_width="300dp"
+                            android:layout_height="0dp"
+                            android:layout_margin="8dp"
+                            android:background="@color/transparent_black"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:listitem="@layout/media_list_item" />
 
                     </android.support.constraint.ConstraintLayout>
 
