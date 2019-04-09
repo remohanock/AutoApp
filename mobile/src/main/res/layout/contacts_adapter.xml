@@ -8,6 +8,8 @@
     android:background="@drawable/round_button"
     android:backgroundTint="@color/white"
     android:backgroundTintMode="screen"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
     android:minWidth="250dp"
     android:padding="8dp">
 
