@@ -36,6 +36,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -64,6 +65,7 @@ import com.example.autoapp.customclass.TemperatureBarOverlay;
 import com.example.autoapp.customclass.ToggleButton;
 import com.example.autoapp.fragment.CalenderFragment;
 import com.example.autoapp.fragment.ContactsFragment;
+import com.example.autoapp.fragment.StoreFragment;
 import com.example.autoapp.helpers.CircleTransform;
 import com.example.autoapp.helpers.ItemClickSupport;
 import com.example.autoapp.helpers.MusicLibrary;
@@ -119,6 +121,10 @@ public class MainActivity extends AppCompatActivity {
     private BrowseAdapter mBrowserAdapter;
     private RecyclerView rv_allsongs;
     private AllSongsAdapter songsAdapter;
+
+    ImageButton btn_store;
+
+    String webViewUrl = "https://www.amazon.in";
 
 
     @Override
@@ -725,6 +731,33 @@ public class MainActivity extends AppCompatActivity {
                 selectedPosition = position;
             }
         });
+
+        /**
+         * Click listener for the store button.Opens a Fragment with Webview having a specified link.
+         */
+        btn_store.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tv_in_progress.setText("Store is in progress");
+                int position = -1; // give -1 position for Store webview since the button is not part of the recycler view
+                TransitionManager.beginDelayedTransition(viewGroup);        //for transition animation when item is clicked
+                if (fl_app_detail.getVisibility() == View.GONE) {
+                    fl_app_detail.setVisibility(View.VISIBLE);
+                    appsBarExpanded = true;
+                    doSelectedAppFunctionality(position);
+                } else {
+                    if (selectedPosition == position) {  //for checking if same item is opened or not
+                        fl_app_detail.setVisibility(View.GONE);
+                        appsBarExpanded = false;
+                    } else {
+                        doSelectedAppFunctionality(position);
+
+                    }
+                }
+
+                selectedPosition = position;
+            }
+        });
     }
 
     private void doSelectedAppFunctionality(int position) {
@@ -732,6 +765,11 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment fragment = new Fragment();
         switch (position) {
+
+            case -1:
+                fragment = StoreFragment.newInstance(webViewUrl);
+                tv_in_progress.setVisibility(View.GONE);
+                break;
             case 0:
                 fragment = ContactsFragment.newInstance(MainActivity.this);
                 tv_in_progress.setVisibility(View.GONE);
@@ -778,6 +816,7 @@ public class MainActivity extends AppCompatActivity {
         rv_allsongs = findViewById(R.id.rv_allsongs);
 
         lv_playlist.setAdapter(mBrowserAdapter);
+        btn_store = findViewById(R.id.storeButton);
 
         songsAdapter = new AllSongsAdapter(MusicLibrary.getMediaItems(), mCurrentState, mCurrentMetadata, MainActivity.this);
 
