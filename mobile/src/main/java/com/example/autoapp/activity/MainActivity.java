@@ -63,7 +63,7 @@ import com.example.autoapp.customclass.HvacPanelRow;
 import com.example.autoapp.customclass.SeatWarmerButton;
 import com.example.autoapp.customclass.TemperatureBarOverlay;
 import com.example.autoapp.customclass.ToggleButton;
-import com.example.autoapp.fragment.CalenderFragment;
+import com.example.autoapp.fragment.CalendarFragment;
 import com.example.autoapp.fragment.ContactsFragment;
 import com.example.autoapp.fragment.StoreFragment;
 import com.example.autoapp.helpers.CircleTransform;
@@ -770,7 +770,7 @@ public class MainActivity extends AppCompatActivity {
                 tv_in_progress.setVisibility(View.GONE);
                 break;
             case 1:
-                fragment = CalenderFragment.newInstance();
+                fragment = CalendarFragment.newInstance();
                 tv_in_progress.setVisibility(View.GONE);
                 break;
             default:
