@@ -27,6 +27,7 @@ import com.example.autoapp.adapters.ContactsAdapter;
 import com.example.autoapp.models.Contacts;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -81,10 +82,11 @@ public class ContactsFragment extends Fragment {
                 String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                 String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                 String contactID = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
-                Log.d("CONTACTS", contactID + ": " + name + "_" + phoneNumber);
+                Log.i("CONTACTS", contactID + ": " + name + "_" + phoneNumber);
                 Contacts contacts = new Contacts(contactID, name, phoneNumber, "", "", "");
                 contactsArrayList.add(contacts);
             }
+            Collections.sort(contactsArrayList, (o1, o2) -> o1.getContactName().compareTo(o2.getContactName()));
             phones.close();
         }
     }

@@ -1,5 +1,6 @@
 package com.example.autoapp.adapters;
 
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import com.example.autoapp.models.AppsList;
 public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppsAdapterViewHolder> {
 
     private AppsList appsList;
+    private int selectedPosition = -1;
 
     /***
      *
@@ -32,6 +34,13 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppsAdapterVie
     @Override
     public void onBindViewHolder(@NonNull AppsAdapterViewHolder appsAdapterViewHolder, int i) {
         appsAdapterViewHolder.tv_app_name.setText(appsList.getAppsArrayList().get(i).getAppName());
+        if (selectedPosition == i) {
+            appsAdapterViewHolder.tv_app_name.setSelected(true);
+            appsAdapterViewHolder.tv_app_name.setTextColor(Color.parseColor("#FFFFFF"));
+        }else{
+            appsAdapterViewHolder.tv_app_name.setSelected(false);
+            appsAdapterViewHolder.tv_app_name.setTextColor(Color.parseColor("#195C7C"));
+        }
     }
 
     @Override
@@ -46,5 +55,9 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppsAdapterVie
             super(itemView);
             tv_app_name = itemView.findViewById(R.id.tv_app_name);
         }
+    }
+
+    public void setSelected(int position) {
+        selectedPosition = position;
     }
 }

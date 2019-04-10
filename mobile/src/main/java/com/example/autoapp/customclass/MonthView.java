@@ -207,9 +207,9 @@ public class MonthView extends TableLayout {
             btn.setBackgroundResource(R.drawable.calheader);
             btn.setPadding(10, 3, 10, 3);
             btn.setLayoutParams(lp);
-            btn.setTextColor(Color.parseColor("#9C9A9D"));
+            btn.setTextColor(Color.parseColor("#e7e1ea"));
             btn.setText(days[i]);
-            btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
+            btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
             btn.setGravity(Gravity.CENTER);
             tr.addView(btn);    //add the day label to the tablerow
         }
