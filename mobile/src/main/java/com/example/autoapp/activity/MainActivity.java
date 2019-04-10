@@ -717,24 +717,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 tv_in_progress.setText(MessageFormat.format("{0} is in progress", objectsController.getApps(position).getAppName()));
-                TransitionManager.beginDelayedTransition(viewGroup);        //for transition animation when item is clicked
-                appsAdapter.setSelected(position);
-                if (fl_app_detail.getVisibility() == View.GONE) {
-                    fl_app_detail.setVisibility(View.VISIBLE);
-                    appsBarExpanded = true;
-                    doSelectedAppFunctionality(position);
-                } else {
-                    if (selectedPosition == position) {  //for checking if same item is opened or not
-                        fl_app_detail.setVisibility(View.GONE);
-                        appsAdapter.setSelected(-1);
-                        appsBarExpanded = false;
-                    } else {
-                        doSelectedAppFunctionality(position);
-
-                    }
-                }
-                selectedPosition = position;
-                appsAdapter.notifyDataSetChanged();
+                doTopBarEvents(position);
             }
         });
 
@@ -746,24 +729,30 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 tv_in_progress.setText("Store is in progress");
                 int position = -1; // give -1 position for Store webview since the button is not part of the recycler view
-                TransitionManager.beginDelayedTransition(viewGroup);        //for transition animation when item is clicked
-                if (fl_app_detail.getVisibility() == View.GONE) {
-                    fl_app_detail.setVisibility(View.VISIBLE);
-                    appsBarExpanded = true;
-                    doSelectedAppFunctionality(position);
-                } else {
-                    if (selectedPosition == position) {  //for checking if same item is opened or not
-                        fl_app_detail.setVisibility(View.GONE);
-                        appsBarExpanded = false;
-                    } else {
-                        doSelectedAppFunctionality(position);
-
-                    }
-                }
-
-                selectedPosition = position;
+                doTopBarEvents(position);
             }
         });
+    }
+
+    private void doTopBarEvents(int position) {
+        TransitionManager.beginDelayedTransition(viewGroup);        //for transition animation when item is clicked
+        appsAdapter.setSelected(position);
+        if (fl_app_detail.getVisibility() == View.GONE) {
+            fl_app_detail.setVisibility(View.VISIBLE);
+            appsBarExpanded = true;
+            doSelectedAppFunctionality(position);
+        } else {
+            if (selectedPosition == position) {  //for checking if same item is opened or not
+                fl_app_detail.setVisibility(View.GONE);
+                appsAdapter.setSelected(-1);
+                appsBarExpanded = false;
+            } else {
+                doSelectedAppFunctionality(position);
+
+            }
+        }
+        selectedPosition = position;
+        appsAdapter.notifyDataSetChanged();
     }
 
     private void doSelectedAppFunctionality(int position) {

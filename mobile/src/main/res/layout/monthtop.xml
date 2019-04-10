@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:background="#203B5F"
+    android:layout_height="70dp"
+    android:background="#33203B5F"
     android:paddingLeft="25dp"
     android:paddingRight="25dp">
 
@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:padding="10dp"
         android:src="@drawable/left_arrow" />
 
     <LinearLayout
@@ -44,5 +45,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:padding="10dp"
         android:src="@drawable/right_arrow" />
 </RelativeLayout>
