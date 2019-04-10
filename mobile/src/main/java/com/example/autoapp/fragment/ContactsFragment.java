@@ -82,7 +82,7 @@ public class ContactsFragment extends Fragment {
                 String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                 String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                 String contactID = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
-                Log.d("CONTACTS", contactID + ": " + name + "_" + phoneNumber);
+                Log.i("CONTACTS", contactID + ": " + name + "_" + phoneNumber);
                 Contacts contacts = new Contacts(contactID, name, phoneNumber, "", "", "");
                 contactsArrayList.add(contacts);
             }

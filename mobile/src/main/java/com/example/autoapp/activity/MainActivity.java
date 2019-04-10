@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
     private BrowseAdapter mBrowserAdapter;
     private RecyclerView rv_allsongs;
     private AllSongsAdapter songsAdapter;
+    private AppsAdapter appsAdapter;
 
 
     @Override
@@ -692,6 +693,8 @@ public class MainActivity extends AppCompatActivity {
             appsBarExpanded = false;
             selectedPosition = -1;
         }
+        appsAdapter.setSelected(selectedPosition);
+        appsAdapter.notifyDataSetChanged();
     }
 
     /***
@@ -702,13 +705,14 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < appsNames.length; i++) {
             objectsController.setApps(new Apps(i, appsNames[i]));
         }
-        AppsAdapter appsAdapter = new AppsAdapter(objectsController.getAppsList());
+        appsAdapter = new AppsAdapter(objectsController.getAppsList());
         rv_apps.setAdapter(appsAdapter);
         ItemClickSupport.addTo(rv_apps).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 tv_in_progress.setText(MessageFormat.format("{0} is in progress", objectsController.getApps(position).getAppName()));
                 TransitionManager.beginDelayedTransition(viewGroup);        //for transition animation when item is clicked
+                appsAdapter.setSelected(position);
                 if (fl_app_detail.getVisibility() == View.GONE) {
                     fl_app_detail.setVisibility(View.VISIBLE);
                     appsBarExpanded = true;
@@ -716,6 +720,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     if (selectedPosition == position) {  //for checking if same item is opened or not
                         fl_app_detail.setVisibility(View.GONE);
+                        appsAdapter.setSelected(-1);
                         appsBarExpanded = false;
                     } else {
                         doSelectedAppFunctionality(position);
@@ -723,6 +728,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 selectedPosition = position;
+                appsAdapter.notifyDataSetChanged();
             }
         });
     }

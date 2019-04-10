@@ -11,7 +11,7 @@
         android:layout_margin="5dp"
         android:padding="10dp"
         android:elevation="8dp"
-        android:background="@drawable/round_button"
+        android:background="@drawable/selected_drawable"
         android:text="@string/app"
         android:textColor="#195C7C"
         android:textSize="18sp"
