@@ -1,9 +1,11 @@
 package com.example.autoapp.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
@@ -13,6 +15,7 @@ import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -126,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
     ImageButton btn_store;
 
     String webViewUrl = "https://www.amazon.in";
-
+    private static final int READ_STORAGE_PERMISSION_REQUEST_CODE = 0x03;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +145,33 @@ public class MainActivity extends AppCompatActivity {
         setMediaPlayer();       //initialize the media player functionality
         initializeMap();        //setup the map and its functionality
         setFunctionality();   //setup the HVAC elements UI/UX functionality
+
+    }
+
+    public void enableReadStoragePermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                MainActivity.this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            Toast.makeText(MainActivity.this, "Storage read permission is required for loading songs", Toast.LENGTH_LONG).show();
+
+        } else {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE}, READ_STORAGE_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case READ_STORAGE_PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    MusicLibrary.loadAudio(MainActivity.this);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     private void setFunctionality() {
@@ -285,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
                                 ? R.drawable.ic_favorite_border_white_24dp
                                 : MusicLibrary.getFavouriteBitmap(metadata.getDescription().getMediaId())));
         mBrowserAdapter.notifyDataSetChanged();
-        songsAdapter.updatePlayback(mCurrentState, mCurrentMetadata);
+        songsAdapter.updatePlayback(mCurrentState, mCurrentMetadata, MusicLibrary.getMediaItems());
 
     }
 
@@ -324,7 +354,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onPlaybackStateChanged(PlaybackStateCompat state) {
                     updatePlaybackState(state);
                     mBrowserAdapter.notifyDataSetChanged();
-                    songsAdapter.updatePlayback(mCurrentState, mCurrentMetadata);
+                    songsAdapter.updatePlayback(mCurrentState, mCurrentMetadata, MusicLibrary.getMediaItems());
 
                 }
 
@@ -332,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onSessionDestroyed() {
                     updatePlaybackState(null);
                     mBrowserAdapter.notifyDataSetChanged();
-                    songsAdapter.updatePlayback(mCurrentState, mCurrentMetadata);
+                    songsAdapter.updatePlayback(mCurrentState, mCurrentMetadata, MusicLibrary.getMediaItems());
 
                 }
             };
@@ -353,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void onMediaLoaded(List<MediaBrowserCompat.MediaItem> media) {
 
-        if (mCurrentMetadata == null) {
+        if (mCurrentMetadata == null && MusicLibrary.getMediaItems().size()>0) {
             mCurrentMetadata =
                     MusicLibrary.getMetadata(
                             MainActivity.this,
@@ -388,6 +418,13 @@ public class MainActivity extends AppCompatActivity {
      * Set the media player view and functionality
      */
     private void setMediaPlayer() {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            MusicLibrary.loadAudio(this);
+        } else {
+            enableReadStoragePermission();
+        }
+
         Glide.with(this).load("https://i.imgur.com/jAwu0Xk.png").error(android.R.drawable.ic_menu_gallery).into(iv_album_art);
         iv_album_art.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -423,7 +460,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                toggleFavourite(mCurrentMetadata.getDescription().getMediaId());
+                if(mCurrentMetadata!=null) {
+                    toggleFavourite(mCurrentMetadata.getDescription().getMediaId());
+                }else{
+                    Toast.makeText(MainActivity.this, "Invalid Media Item", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -440,7 +481,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 onMediaItemSelected(MusicLibrary.getMediaItems().get(position));
-                songsAdapter.updatePlayback(mCurrentState, mCurrentMetadata);
+                songsAdapter.updatePlayback(mCurrentState, mCurrentMetadata,MusicLibrary.getMediaItems());
             }
         });
     }
@@ -851,6 +892,11 @@ public class MainActivity extends AppCompatActivity {
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(MusicLibrary.getMediaItems().size()<1){
+                        Toast.makeText(MainActivity.this, "No Songs Available", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     switch (v.getId()) {
                         case R.id.iv_playpause:
                             togglePauseOrPlay();

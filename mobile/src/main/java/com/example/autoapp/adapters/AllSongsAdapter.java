@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.media.session.PlaybackState;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -21,7 +20,6 @@ import android.widget.TextView;
 import com.example.autoapp.R;
 import com.example.autoapp.helpers.MusicLibrary;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.autoapp.adapters.MediaItemViewHolder.STATE_PAUSED;
@@ -113,9 +111,10 @@ public class AllSongsAdapter extends RecyclerView.Adapter<AllSongsAdapter.AllSon
     }
 
     public void updatePlayback(PlaybackStateCompat mCurrentState,
-            MediaMetadataCompat mCurrentMetadata){
+                               MediaMetadataCompat mCurrentMetadata, List<MediaBrowserCompat.MediaItem> mediaItems){
         this.mCurrentMetadata = mCurrentMetadata;
         this.mCurrentState = mCurrentState;
+        this.mediaItems = mediaItems;
         notifyDataSetChanged();
     }
     public class AllSongsViewholder extends RecyclerView.ViewHolder{

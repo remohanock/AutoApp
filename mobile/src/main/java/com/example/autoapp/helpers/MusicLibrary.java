@@ -15,15 +15,21 @@
  */
 package com.example.autoapp.helpers;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 
-import com.example.autoapp.BuildConfig;
 import com.example.autoapp.R;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,56 +38,61 @@ import java.util.TreeMap;
 public class MusicLibrary {
 
     private static final TreeMap<String, MediaMetadataCompat> music = new TreeMap<>();
-    private static final HashMap<String, Integer> albumRes = new HashMap<>();
-    private static final HashMap<String, Integer> musicRes = new HashMap<>();
     private static final HashMap<String, Integer> favourites = new HashMap<>();
 
-    static {
-        createMediaMetadataCompat(
-                "Jazz_In_Paris",
-                "Jazz in Paris",
-                "Media Right Productions",
-                "Jazz & Blues",
-                "Jazz",
-                103,
-                R.raw.jazz_in_paris,
-                R.drawable.album_jazz_blues,
-                "album_jazz_blues");
-        createMediaMetadataCompat(
-                "The_Coldest_Shoulder",
-                "The Coldest Shoulder",
-                "The 126ers",
-                "Youtube Audio Library Rock 2",
-                "Rock",
-                160,
-                R.raw.the_coldest_shoulder,
-                R.drawable.album_youtube_audio_library_rock_2,
-                "album_youtube_audio_library_rock_2");
 
-    }
 
     public static String getRoot() {
         return "root";
     }
 
     public static String getSongUri(String mediaId) {
-        return "android.resource://" + BuildConfig.APPLICATION_ID + "/" + getMusicRes(mediaId);
+        return getMusicRes(mediaId);
     }
 
-    private static String getAlbumArtUri(String albumArtResName) {
-        return "android.resource://" + BuildConfig.APPLICATION_ID + "/drawable/" + albumArtResName;
+
+    /**
+     * Returns the music data to be played
+     * @param mediaId
+     * @return
+     */
+    private static String getMusicRes(String mediaId) {
+        return music.containsKey(mediaId) ? music.get(mediaId).getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI) : null;
     }
 
-    private static int getMusicRes(String mediaId) {
-        return musicRes.containsKey(mediaId) ? musicRes.get(mediaId) : 0;
+    /**
+     * Returns the Uri of the album art as String
+     * @param mediaId
+     * @return
+     */
+    private static String getAlbumRes(String mediaId) {
+        return music.containsKey(mediaId) ? music.get(mediaId).getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI) : null;
     }
 
-    private static int getAlbumRes(String mediaId) {
-        return albumRes.containsKey(mediaId) ? albumRes.get(mediaId) : 0;
-    }
-
+    /**
+     * Creates album art bitmap from the Uri or sets a default bitmap if URI doesnt exist
+     * @param ctx
+     * @param mediaId
+     * @return
+     */
     public static Bitmap getAlbumBitmap(Context ctx, String mediaId) {
-        return BitmapFactory.decodeResource(ctx.getResources(), MusicLibrary.getAlbumRes(mediaId));
+       Bitmap bitmap = null;
+        try {
+
+            Uri albumUri = Uri.parse(getAlbumRes(mediaId));
+            bitmap = MediaStore.Images.Media.getBitmap(
+                    ctx.getContentResolver(), albumUri);
+            bitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, true);
+
+        } catch (FileNotFoundException exception) {
+            exception.printStackTrace();
+            bitmap = BitmapFactory.decodeResource(ctx.getResources(),
+                    R.drawable.album_cover_default);
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 
     /**
@@ -189,6 +200,20 @@ public class MusicLibrary {
         return builder.build();
     }
 
+    /**
+     *
+     * Creates Metadata object from songs fetched from external storage. Objects are added to a treemap and sorted according
+     * to its key value. Title is therefore set as MediaID which is the key value and hence the list will be sorted in
+     * ascending order.
+     * @param mediaId
+     * @param title
+     * @param artist
+     * @param album
+     * @param genre
+     * @param duration
+     * @param musicResId
+     * @param albumArtResId
+     */
     private static void createMediaMetadataCompat(
             String mediaId,
             String title,
@@ -196,9 +221,8 @@ public class MusicLibrary {
             String album,
             String genre,
             long duration,
-            int musicResId,
-            int albumArtResId,
-            String albumArtResName) {
+            String musicResId,
+            String  albumArtResId) {
         music.put(
                 mediaId,
                 new MediaMetadataCompat.Builder()
@@ -208,15 +232,53 @@ public class MusicLibrary {
                         .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration * 1000)
                         .putString(MediaMetadataCompat.METADATA_KEY_GENRE, genre)
                         .putString(
-                                MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI,
-                                getAlbumArtUri(albumArtResName))
+                                MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, albumArtResId)
                         .putString(
-                                MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI,
-                                getAlbumArtUri(albumArtResName))
+                                MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, albumArtResId)
                         .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI,musicResId)
                         .build());
-        albumRes.put(mediaId, albumArtResId);
-        musicRes.put(mediaId, musicResId);
         favourites.put(mediaId,0);
     }
+
+    /**
+     *
+     * Loads music files from External Storage
+     * @param context
+     */
+    public static void loadAudio(Context context)  {
+
+        ContentResolver contentResolver = context.getContentResolver();
+
+
+        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+        String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
+        Cursor cursor = contentResolver.query(uri, null, selection, null, sortOrder);
+
+        if (cursor != null && cursor.getCount() > 0) {
+
+            while (cursor.moveToNext()) {
+                String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                String genre = cursor.getString(cursor.getColumnIndex("genre_name"));
+                long duration  = Long.parseLong(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)));
+                Long albumId = cursor.getLong(cursor
+                        .getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
+                Uri sArtworkUri = Uri
+                        .parse("content://media/external/audio/albumart");
+                Uri albumArtUri = ContentUris.withAppendedId(sArtworkUri, albumId);
+
+                createMediaMetadataCompat(title,title,artist,album,genre,duration,data,albumArtUri.toString());
+
+            }
+        }
+        if(cursor!=null) {
+            cursor.close();
+        }
+    }
+
+
 }
