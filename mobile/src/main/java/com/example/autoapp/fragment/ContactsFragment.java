@@ -65,13 +65,6 @@ public class ContactsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            getContacts();
-        } else {
-            enableReadContactsPermission();
-        }
-
     }
 
     private void getContacts() {
@@ -109,7 +102,11 @@ public class ContactsFragment extends Fragment {
         tv_no_contacts = view.findViewById(R.id.tv_no_contacts);
         rv_contacts.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.HORIZONTAL, false));
 
-
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            getContacts();
+        } else {
+            enableReadContactsPermission();
+        }
         return view;
     }
 
@@ -118,7 +115,20 @@ public class ContactsFragment extends Fragment {
         if (ActivityCompat.shouldShowRequestPermissionRationale(
                 (Activity) mContext,
                 Manifest.permission.READ_CONTACTS)) {
-            Toast.makeText(mContext, "Contact read permission is required for obtaining the contact details", Toast.LENGTH_LONG).show();
+            /* new AlertDialog.Builder(mContext)
+                    .setTitle("Permission Required")
+                    .setMessage("Contact read permission is required for obtaining the contact details")
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", mContext.getPackageName(), null));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        Toast toast = Toast.makeText(mContext, "Please enable contacts permissions from Permissions section", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+                    }).show();*/
+            ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.READ_CONTACTS}, RequestPermissionCode);
+            Toast.makeText(mContext, "Contact read permission is required for obtaining the contact details", Toast.LENGTH_SHORT).show();
         } else {
             ActivityCompat.requestPermissions((Activity) mContext, new String[]{
                     Manifest.permission.READ_CONTACTS}, RequestPermissionCode);
@@ -131,7 +141,7 @@ public class ContactsFragment extends Fragment {
             case RequestPermissionCode:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     getContacts();
-                }else{
+                } else {
                     Toast.makeText(mContext, "Permission denied to read your Contacts", Toast.LENGTH_SHORT).show();
                 }
                 break;

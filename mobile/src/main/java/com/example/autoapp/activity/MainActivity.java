@@ -205,7 +205,8 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)) {
             Toast.makeText(MainActivity.this, "Storage read permission is required for loading songs", Toast.LENGTH_LONG).show();
-
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE}, READ_STORAGE_PERMISSION_REQUEST_CODE);
         } else {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                     Manifest.permission.READ_EXTERNAL_STORAGE}, READ_STORAGE_PERMISSION_REQUEST_CODE);

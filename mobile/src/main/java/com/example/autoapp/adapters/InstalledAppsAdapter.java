@@ -1,7 +1,9 @@
 package com.example.autoapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import com.example.autoapp.R;
 import com.example.autoapp.models.InstalledApps;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class InstalledAppsAdapter extends RecyclerView.Adapter<InstalledAppsAdapter.InstalledAppsAdapterViewHolder> implements Filterable {
 
@@ -31,6 +34,7 @@ public class InstalledAppsAdapter extends RecyclerView.Adapter<InstalledAppsAdap
         this.context = context;
         this.installedAppsList = installedAppsList;
         this.installedAppsListFiltered = installedAppsList;
+        Collections.sort(installedAppsListFiltered, (o1, o2) -> o1.getInstalledAppName().compareTo(o2.getInstalledAppName()));
     }
 
     @NonNull
@@ -49,6 +53,12 @@ public class InstalledAppsAdapter extends RecyclerView.Adapter<InstalledAppsAdap
         } else {
             installedAppsAdapterViewHolder.iv_installed_apps.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), R.mipmap.ic_launcher, null));
         }
+        installedAppsAdapterViewHolder.cl_installed_apps.setOnClickListener(v -> {
+            Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(installedAppsListFiltered.get(i).getAppPackageName());
+            if (launchIntent != null) {
+                context.startActivity(launchIntent);//null pointer check in case package name was not found
+            }
+        });
 
     }
 
@@ -83,6 +93,7 @@ public class InstalledAppsAdapter extends RecyclerView.Adapter<InstalledAppsAdap
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 installedAppsListFiltered = (ArrayList<InstalledApps>) results.values;
+                Collections.sort(installedAppsListFiltered, (o1, o2) -> o1.getInstalledAppName().compareTo(o2.getInstalledAppName()));
                 notifyDataSetChanged();
             }
         };
@@ -92,12 +103,14 @@ public class InstalledAppsAdapter extends RecyclerView.Adapter<InstalledAppsAdap
     class InstalledAppsAdapterViewHolder extends RecyclerView.ViewHolder {
         private TextView tv_app_name, tv_package_name;
         private ImageView iv_installed_apps;
+        private ConstraintLayout cl_installed_apps;
 
         InstalledAppsAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             tv_app_name = itemView.findViewById(R.id.tv_app_name);
             tv_package_name = itemView.findViewById(R.id.tv_package_name);
             iv_installed_apps = itemView.findViewById(R.id.iv_installed_apps);
+            cl_installed_apps = itemView.findViewById(R.id.cl_installed_apps);
         }
     }
 }
