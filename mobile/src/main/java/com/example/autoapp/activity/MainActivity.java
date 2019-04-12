@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -44,6 +45,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
+import android.widget.SearchView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -53,6 +55,7 @@ import com.bumptech.glide.Glide;
 import com.example.autoapp.R;
 import com.example.autoapp.adapters.AllSongsAdapter;
 import com.example.autoapp.adapters.AppsAdapter;
+import com.example.autoapp.adapters.InstalledAppsAdapter;
 import com.example.autoapp.adapters.MediaItemViewHolder;
 import com.example.autoapp.adapters.PlaylistSpinnerAdapter;
 import com.example.autoapp.controller.FanDirectionButtonsController;
@@ -73,6 +76,7 @@ import com.example.autoapp.helpers.CircleTransform;
 import com.example.autoapp.helpers.ItemClickSupport;
 import com.example.autoapp.helpers.MusicLibrary;
 import com.example.autoapp.models.Apps;
+import com.example.autoapp.models.InstalledApps;
 import com.example.autoapp.services.MyMusicService;
 import com.example.autoapp.wheelview.WheelView;
 
@@ -125,6 +129,9 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rv_allsongs;
     private AllSongsAdapter songsAdapter;
     private AppsAdapter appsAdapter;
+    private SearchView searchView;
+    private RecyclerView rv_installed_apps;
+    private InstalledAppsAdapter installedAppsAdapter;
 
     ImageButton btn_store;
 
@@ -138,14 +145,58 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         objectsController = new ObjectsController();
-        getExtras();            //get the parameters from the previous activity
-        bindControls();         //bind all the UI elements
-        initAnimation();        //initialize the animations
-        setAppsListItems();     //set the apps list in the top section of the screen
-        setMediaPlayer();       //initialize the media player functionality
-        initializeMap();        //setup the map and its functionality
-        setFunctionality();   //setup the HVAC elements UI/UX functionality
+        getExtras();                //get the parameters from the previous activity
+        bindControls();             //bind all the UI elements
+        initAnimation();            //initialize the animations
+        setAppsListItems();         //set the apps list in the top section of the screen
+        setMediaPlayer();           //initialize the media player functionality
+        initializeMap();            //setup the map and its functionality
+        setFunctionality();         //setup the HVAC elements UI/UX functionality
+        setSearchFunctionality();
+    }
 
+    private void setSearchFunctionality() {
+        rv_installed_apps = viewGroup.findViewById(R.id.rv_installed_apps);
+        searchView.setQueryHint(getString(R.string.search_apps));
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final PackageManager pm = getPackageManager();
+                //get a list of installed apps.
+                List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+                ArrayList<InstalledApps> installedAppsList = new ArrayList<>();
+                for (ApplicationInfo packageInfo : packages) {
+                    if (getPackageManager().getLaunchIntentForPackage(packageInfo.packageName) != null && !packageInfo.packageName.equals(getPackageName())) {
+                        installedAppsList.add(new InstalledApps(packageInfo.loadLabel(getPackageManager()).toString(), packageInfo.packageName, packageInfo.sourceDir, packageInfo.loadIcon(getPackageManager())));
+                    }
+                }
+                rv_installed_apps.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
+                installedAppsAdapter = new InstalledAppsAdapter(MainActivity.this, installedAppsList);
+                rv_installed_apps.setAdapter(installedAppsAdapter);
+                TransitionManager.beginDelayedTransition(viewGroup);        //for transition animation when item is clicked
+                rv_installed_apps.setVisibility(View.VISIBLE);
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                installedAppsAdapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                installedAppsAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+
+        searchView.setOnCloseListener(() -> {
+            rv_installed_apps.setVisibility(View.GONE);
+            TransitionManager.beginDelayedTransition(viewGroup);        //for transition animation when item is clicked
+            rv_installed_apps.setAdapter(null);
+            return false;
+        });
     }
 
     public void enableReadStoragePermission() {
@@ -383,7 +434,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void onMediaLoaded(List<MediaBrowserCompat.MediaItem> media) {
 
-        if (mCurrentMetadata == null && MusicLibrary.getMediaItems().size()>0) {
+        if (mCurrentMetadata == null && MusicLibrary.getMediaItems().size() > 0) {
             mCurrentMetadata =
                     MusicLibrary.getMetadata(
                             MainActivity.this,
@@ -460,9 +511,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(mCurrentMetadata!=null) {
+                if (mCurrentMetadata != null) {
                     toggleFavourite(mCurrentMetadata.getDescription().getMediaId());
-                }else{
+                } else {
                     Toast.makeText(MainActivity.this, "Invalid Media Item", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -481,7 +532,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 onMediaItemSelected(MusicLibrary.getMediaItems().get(position));
-                songsAdapter.updatePlayback(mCurrentState, mCurrentMetadata,MusicLibrary.getMediaItems());
+                songsAdapter.updatePlayback(mCurrentState, mCurrentMetadata, MusicLibrary.getMediaItems());
             }
         });
     }
@@ -739,9 +790,9 @@ public class MainActivity extends AppCompatActivity {
             fl_app_detail.setVisibility(View.GONE);
             appsBarExpanded = false;
             selectedPosition = -1;
+            appsAdapter.setSelected(selectedPosition);
+            appsAdapter.notifyDataSetChanged();
         }
-        appsAdapter.setSelected(selectedPosition);
-        appsAdapter.notifyDataSetChanged();
     }
 
     /***
@@ -850,6 +901,7 @@ public class MainActivity extends AppCompatActivity {
         sp_playlist_titles = findViewById(R.id.playlist_spinner);
         lv_playlist = findViewById(R.id.lv_playlist);
         rv_allsongs = findViewById(R.id.rv_allsongs);
+        searchView = findViewById(R.id.searchView);
 
         lv_playlist.setAdapter(mBrowserAdapter);
         btn_store = findViewById(R.id.storeButton);
@@ -892,7 +944,7 @@ public class MainActivity extends AppCompatActivity {
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(MusicLibrary.getMediaItems().size()<1){
+                    if (MusicLibrary.getMediaItems().size() < 1) {
                         Toast.makeText(MainActivity.this, "No Songs Available", Toast.LENGTH_SHORT).show();
                         return;
                     }

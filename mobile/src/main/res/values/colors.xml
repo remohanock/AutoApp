@@ -32,4 +32,5 @@
 
     <color name="media_item_icon_playing">@color/colorAccent</color>
     <color name="media_item_icon_not_playing">#ccc</color>
+    <color name="text_color">#195C7C</color>
 </resources>
