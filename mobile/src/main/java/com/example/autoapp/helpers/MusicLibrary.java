@@ -91,6 +91,10 @@ public class MusicLibrary {
         } catch (IOException e) {
 
             e.printStackTrace();
+        } catch (NullPointerException ne){
+            ne.printStackTrace();
+            bitmap = BitmapFactory.decodeResource(ctx.getResources(),
+                    R.drawable.album_cover_default);
         }
         return bitmap;
     }
