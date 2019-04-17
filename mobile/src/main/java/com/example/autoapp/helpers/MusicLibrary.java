@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
+import android.util.Log;
 
 import com.example.autoapp.R;
 
@@ -41,7 +42,6 @@ public class MusicLibrary {
     private static final HashMap<String, Integer> favourites = new HashMap<>();
 
 
-
     public static String getRoot() {
         return "root";
     }
@@ -53,6 +53,7 @@ public class MusicLibrary {
 
     /**
      * Returns the music data to be played
+     *
      * @param mediaId
      * @return
      */
@@ -62,6 +63,7 @@ public class MusicLibrary {
 
     /**
      * Returns the Uri of the album art as String
+     *
      * @param mediaId
      * @return
      */
@@ -71,12 +73,13 @@ public class MusicLibrary {
 
     /**
      * Creates album art bitmap from the Uri or sets a default bitmap if URI doesnt exist
+     *
      * @param ctx
      * @param mediaId
      * @return
      */
     public static Bitmap getAlbumBitmap(Context ctx, String mediaId) {
-       Bitmap bitmap = null;
+        Bitmap bitmap = null;
         try {
 
             Uri albumUri = Uri.parse(getAlbumRes(mediaId));
@@ -91,7 +94,7 @@ public class MusicLibrary {
         } catch (IOException e) {
 
             e.printStackTrace();
-        } catch (NullPointerException ne){
+        } catch (NullPointerException ne) {
             ne.printStackTrace();
             bitmap = BitmapFactory.decodeResource(ctx.getResources(),
                     R.drawable.album_cover_default);
@@ -102,42 +105,44 @@ public class MusicLibrary {
     /**
      * switches the value of media id to 1 or 0 depending on current state.
      * 1 - favourite , 0 - non favourite
+     *
      * @param mediaID
      * @return
      */
-    public static int toggleFavourite(String mediaID){
-        if(favourites.containsKey(mediaID) && favourites.get(mediaID)!=null) {
+    public static int toggleFavourite(String mediaID) {
+        if (favourites.containsKey(mediaID) && favourites.get(mediaID) != null) {
             if (favourites.get(mediaID) == 0) {
-                favourites.put(mediaID,1);
+                favourites.put(mediaID, 1);
                 return R.drawable.ic_favorite_white_24dp;
-            }else{
-                favourites.put(mediaID,0);
+            } else {
+                favourites.put(mediaID, 0);
                 return R.drawable.ic_favorite_border_white_24dp;
             }
-        }else{
-            favourites.put(mediaID,0);
+        } else {
+            favourites.put(mediaID, 0);
             return R.drawable.ic_favorite_border_white_24dp;
         }
     }
 
     /**
      * Returns the bitmap according to favourite status of the media item
+     *
      * @param mediaID
      * @return
      */
-    public static int getFavouriteBitmap(String mediaID){
-        if(favourites.containsKey(mediaID) && favourites.get(mediaID)!=null) {
+    public static int getFavouriteBitmap(String mediaID) {
+        if (favourites.containsKey(mediaID) && favourites.get(mediaID) != null) {
 
             return favourites.get(mediaID) == 1 ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_border_white_24dp;
-        }else{
+        } else {
             return R.drawable.ic_favorite_border_white_24dp;
         }
     }
 
-    public static List<MediaBrowserCompat.MediaItem> getFavouriteMediaItems(){
+    public static List<MediaBrowserCompat.MediaItem> getFavouriteMediaItems() {
         List<MediaBrowserCompat.MediaItem> result = new ArrayList<>();
-        for (String mediaID : favourites.keySet()){
-            if(favourites.get(mediaID) == 1 && music.containsKey(mediaID)){
+        for (String mediaID : favourites.keySet()) {
+            if (favourites.get(mediaID) == 1 && music.containsKey(mediaID)) {
                 result.add(
                         new MediaBrowserCompat.MediaItem(
                                 music.get(mediaID).getDescription(), MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
@@ -158,7 +163,7 @@ public class MusicLibrary {
     }
 
     public static String getPreviousSong(String currentMediaId) {
-        if(currentMediaId == null){
+        if (currentMediaId == null) {
             currentMediaId = music.firstKey();
         }
         String prevMediaId = music.lowerKey(currentMediaId);
@@ -170,7 +175,7 @@ public class MusicLibrary {
 
     public static String getNextSong(String currentMediaId) {
 
-        if(currentMediaId == null){
+        if (currentMediaId == null) {
             currentMediaId = music.firstKey();
         }
         String nextMediaId = music.higherKey(currentMediaId);
@@ -188,12 +193,12 @@ public class MusicLibrary {
         // We don't set it initially on all items so that they don't take unnecessary memory.
         MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder();
         for (String key :
-                new String[] {
-                    MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
-                    MediaMetadataCompat.METADATA_KEY_ALBUM,
-                    MediaMetadataCompat.METADATA_KEY_ARTIST,
-                    MediaMetadataCompat.METADATA_KEY_GENRE,
-                    MediaMetadataCompat.METADATA_KEY_TITLE
+                new String[]{
+                        MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
+                        MediaMetadataCompat.METADATA_KEY_ALBUM,
+                        MediaMetadataCompat.METADATA_KEY_ARTIST,
+                        MediaMetadataCompat.METADATA_KEY_GENRE,
+                        MediaMetadataCompat.METADATA_KEY_TITLE
                 }) {
             builder.putString(key, metadataWithoutBitmap.getString(key));
         }
@@ -205,10 +210,10 @@ public class MusicLibrary {
     }
 
     /**
-     *
      * Creates Metadata object from songs fetched from external storage. Objects are added to a treemap and sorted according
      * to its key value. Title is therefore set as MediaID which is the key value and hence the list will be sorted in
      * ascending order.
+     *
      * @param mediaId
      * @param title
      * @param artist
@@ -226,7 +231,7 @@ public class MusicLibrary {
             String genre,
             long duration,
             String musicResId,
-            String  albumArtResId) {
+            String albumArtResId) {
         music.put(
                 mediaId,
                 new MediaMetadataCompat.Builder()
@@ -240,46 +245,59 @@ public class MusicLibrary {
                         .putString(
                                 MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, albumArtResId)
                         .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI,musicResId)
+                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, musicResId)
                         .build());
-        favourites.put(mediaId,0);
+        favourites.put(mediaId, 0);
     }
 
     /**
-     *
      * Loads music files from External Storage
+     *
      * @param context
      */
-    public static void loadAudio(Context context)  {
+    public static void loadAudio(Context context) throws IllegalStateException {
 
         ContentResolver contentResolver = context.getContentResolver();
 
-
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+       // String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+        String selection = MediaStore.Audio.Media.DATA
+                + " LIKE '%Music%'";
         String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
+
         Cursor cursor = contentResolver.query(uri, null, selection, null, sortOrder);
+
 
         if (cursor != null && cursor.getCount() > 0) {
 
             while (cursor.moveToNext()) {
+                // TODO: 17-04-2019 remove this log later
+                for (String column :
+                        cursor.getColumnNames()) {
+                    Log.e("loadAudio cursor fields", column);
+                }
                 String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
                 String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
                 String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
                 String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                String genre = cursor.getString(cursor.getColumnIndex("genre_name"));
-                long duration  = Long.parseLong(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)));
+                String genre = null;
+                try {
+                    genre = cursor.getString(cursor.getColumnIndex("genre_name"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                long duration = Long.parseLong(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)));
                 Long albumId = cursor.getLong(cursor
                         .getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
                 Uri sArtworkUri = Uri
                         .parse("content://media/external/audio/albumart");
                 Uri albumArtUri = ContentUris.withAppendedId(sArtworkUri, albumId);
 
-                createMediaMetadataCompat(title,title,artist,album,genre,duration,data,albumArtUri.toString());
+                createMediaMetadataCompat(title, title, artist, album, genre, duration, data, albumArtUri.toString());
 
             }
         }
-        if(cursor!=null) {
+        if (cursor != null) {
             cursor.close();
         }
     }
