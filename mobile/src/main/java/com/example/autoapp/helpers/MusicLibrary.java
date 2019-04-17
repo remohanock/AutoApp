@@ -280,7 +280,7 @@ public class MusicLibrary {
                 String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
                 String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
                 String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                String genre = null;
+                String genre = "";
                 try {
                     genre = cursor.getString(cursor.getColumnIndex("genre_name"));
                 } catch (Exception e) {
