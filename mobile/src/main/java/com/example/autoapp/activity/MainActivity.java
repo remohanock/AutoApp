@@ -3,8 +3,11 @@ package com.example.autoapp.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -14,6 +17,7 @@ import android.media.session.PlaybackState;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
@@ -130,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
     private AllSongsAdapter songsAdapter;
     private AppsAdapter appsAdapter;
     private SearchView searchView;
+    private ImageView imageView3;
+    private ImageView imageView5;
+    private ImageView imageView4;
     private RecyclerView rv_installed_apps;
     private InstalledAppsAdapter installedAppsAdapter;
 
@@ -153,6 +160,11 @@ public class MainActivity extends AppCompatActivity {
         initializeMap();            //setup the map and its functionality
         setFunctionality();         //setup the HVAC elements UI/UX functionality
         setSearchFunctionality();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //do nothing
     }
 
     private void setSearchFunctionality() {
@@ -903,6 +915,18 @@ public class MainActivity extends AppCompatActivity {
         lv_playlist = findViewById(R.id.lv_playlist);
         rv_allsongs = findViewById(R.id.rv_allsongs);
         searchView = findViewById(R.id.searchView);
+        imageView3 = findViewById(R.id.imageView3);
+        imageView5 = findViewById(R.id.imageView5);
+        imageView4 = findViewById(R.id.imageView4);
+        imageView3.setOnClickListener(v -> {
+          startActivity(new Intent(Settings.ACTION_SETTINGS));
+        });
+        imageView5.setOnClickListener(v -> {
+            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+        });
+        imageView4.setOnClickListener(v -> {
+            startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
+        });
 
         lv_playlist.setAdapter(mBrowserAdapter);
         btn_store = findViewById(R.id.storeButton);
@@ -918,6 +942,7 @@ public class MainActivity extends AppCompatActivity {
                 .transform(new CircleTransform())
                 .error(getDrawable(R.drawable.driver))
                 .into(iv_profile);
+        iv_profile.setOnClickListener(profileClickListener);
         rv_apps.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rv_allsongs.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     }
@@ -942,33 +967,51 @@ public class MainActivity extends AppCompatActivity {
      * Click listener for the play,next and previous buttons
      */
     private final View.OnClickListener mPlaybackButtonListener =
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (MusicLibrary.getMediaItems().size() < 1) {
-                        Toast.makeText(MainActivity.this, "No Songs Available", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    switch (v.getId()) {
-                        case R.id.iv_playpause:
-                            togglePauseOrPlay();
-                            break;
-                        case R.id.iv_next:
-                            MediaControllerCompat.getMediaController(MainActivity.this)
-                                    .getTransportControls()
-                                    .skipToNext();
-
-                            break;
-                        case R.id.iv_prev:
-                            MediaControllerCompat.getMediaController(MainActivity.this)
-                                    .getTransportControls()
-                                    .skipToPrevious();
-                            break;
-                    }
-
+            v -> {
+                if (MusicLibrary.getMediaItems().size() < 1) {
+                    Toast.makeText(MainActivity.this, "No Songs Available", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
+                switch (v.getId()) {
+                    case R.id.iv_playpause:
+                        togglePauseOrPlay();
+                        break;
+                    case R.id.iv_next:
+                        MediaControllerCompat.getMediaController(MainActivity.this)
+                                .getTransportControls()
+                                .skipToNext();
+
+                        break;
+                    case R.id.iv_prev:
+                        MediaControllerCompat.getMediaController(MainActivity.this)
+                                .getTransportControls()
+                                .skipToPrevious();
+                        break;
+                }
+
             };
+
+    private View.OnClickListener profileClickListener = v -> {
+        AlertDialog.Builder builder  = new AlertDialog.Builder(MainActivity.this);
+        builder.setCancelable(false);
+        builder.setMessage("Are you sure you want to log out?");
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            SharedPreferences driverPreferences = getSharedPreferences("DRIVER_PREFERENCES",MODE_PRIVATE);
+            SharedPreferences.Editor editor = driverPreferences.edit();
+            editor.clear();
+            editor.commit();
+            finish();
+            Intent intent = new Intent(MainActivity.this,HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        });
+        builder.setNegativeButton("No", (dialog, which) -> {
+            dialog.dismiss();
+        });
+        builder.create().show();
+
+    };
 
     /**
      * Plays or Pauses the media file based on its current state

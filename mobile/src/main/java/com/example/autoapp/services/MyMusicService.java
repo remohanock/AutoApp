@@ -12,7 +12,6 @@ import com.example.autoapp.helpers.MediaNotificationManager;
 import com.example.autoapp.helpers.MusicLibrary;
 import com.example.autoapp.helpers.PlaybackManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -88,7 +88,7 @@ public class PlaybackManager
                         Uri.parse(MusicLibrary.getSongUri(mediaId)));
                 mMediaPlayer.prepare();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
 
