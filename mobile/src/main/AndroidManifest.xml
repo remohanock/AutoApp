@@ -21,7 +21,16 @@
         <activity
             android:name=".activity.MainActivity"
             android:configChanges="screenSize|screenLayout|orientation"
-            android:screenOrientation="sensor" />
+            android:screenOrientation="sensor"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.HOME" />
+            </intent-filter>
+        </activity>
 
         <meta-data
             android:name="com.google.android.gms.car.application"
@@ -44,13 +53,7 @@
             android:configChanges="screenSize|screenLayout|orientation"
             android:launchMode="singleTask"
             android:screenOrientation="sensor">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.HOME" />
-            </intent-filter>
         </activity>
 
         <receiver

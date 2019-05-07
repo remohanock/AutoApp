@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean mAutoMode;
     private Drawable mAutoOnDrawable;
     private Drawable mAutoOffDrawable;
+    private SharedPreferences driverPreferences;
 
     private BrowseAdapter mBrowserAdapter;
     private RecyclerView rv_allsongs;
@@ -152,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         objectsController = new ObjectsController();
+        checkSharedPreferences();
         getExtras();                //get the parameters from the previous activity
         bindControls();             //bind all the UI elements
         initAnimation();            //initialize the animations
@@ -165,6 +167,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         //do nothing
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (driverPreferences.getString("DriverName", null) != null &&
+                driverPreferences.getString("DriverPhoto", null) != null) {
+            driverImage = driverPreferences.getString("DriverPhoto", null);
+        }
     }
 
     private void setSearchFunctionality() {
@@ -1041,6 +1052,17 @@ public class MainActivity extends AppCompatActivity {
             MediaControllerCompat.getMediaController(MainActivity.this)
                     .getTransportControls()
                     .pause();
+        }
+    }
+
+    private void checkSharedPreferences(){
+        driverPreferences = getSharedPreferences("DRIVER_PREFERENCES", MODE_PRIVATE);
+        if (driverPreferences.getString("DriverName", null) == null ||
+                driverPreferences.getString("DriverPhoto", null) == null) {
+            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
         }
     }
 
